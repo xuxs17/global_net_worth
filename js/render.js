@@ -1,6 +1,5 @@
 const RenderModule = (() => {
   const container = () => document.getElementById('results-container');
-  const captureArea = () => document.getElementById('capture-area');
   const captureTitle = () => document.querySelector('.capture-title');
   const disclaimerDate = () => document.getElementById('data-date');
   const shareActions = () => document.getElementById('share-actions');
@@ -12,7 +11,7 @@ const RenderModule = (() => {
   function formatAmount(amount, currencyCode) {
     const intCurrencies = new Set(['JPY', 'VND', 'IDR', 'RUB', 'INR']);
     const decimals = intCurrencies.has(currencyCode) ? 0 : 2;
-    return amount.toLocaleString('zh-CN', {
+    return amount.toLocaleString('en-US', {
       minimumFractionDigits: decimals,
       maximumFractionDigits: decimals,
     });
@@ -28,7 +27,7 @@ const RenderModule = (() => {
     sorted.forEach((item, index) => {
       const card = document.createElement('div');
       card.className = 'result-card';
-      card.style.animationDelay = `${index * 0.08}s`;
+      card.style.animationDelay = `${index * 0.06}s`;
       card.innerHTML = `
         <div class="card-rank">#${index + 1}</div>
         <div class="card-flag">${item.flagEmoji}</div>
@@ -60,7 +59,11 @@ const RenderModule = (() => {
 
   function renderEmpty() {
     if (!container()) return;
-    container().innerHTML = `<div class="empty-hint">输入你的月薪，看看在全球算什么水平</div>`;
+    container().innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🌍</div>
+        <div class="empty-hint">${I18n.t('emptyHint')}</div>
+      </div>`;
     if (captureTitle()) captureTitle().style.display = 'none';
     if (shareActions()) shareActions.style.display = 'none';
   }

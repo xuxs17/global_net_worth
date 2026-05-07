@@ -48,7 +48,7 @@ const ShareModule = (() => {
       URL.revokeObjectURL(url);
     } catch (e) {
       // user cancelled share
-      if (e.name !== 'AbortError') console.error('截图失败:', e);
+      if (e.name !== 'AbortError') console.error('Screenshot failed:', e);
     }
   }
 

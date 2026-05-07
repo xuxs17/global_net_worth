@@ -1,127 +1,116 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>全球收入水平对比 — 你的工资在全球算什么水平？</title>
-  <meta name="description" content="输入你的月薪，看看在全球10个国家的财富等级排行榜。支持购买力平价(PPP)对比，趣味动画角色呈现。">
-  <meta property="og:title" content="全球收入水平对比计算器">
-  <meta property="og:description" content="看看你的工资在全球算什么水平">
+  <title>Global Income Comparison — What's Your Income Worth Worldwide?</title>
+  <meta name="description" content="Enter your monthly salary and see how you rank across 10 countries. Compare purchasing power parity (PPP) with fun animated characters.">
+  <meta property="og:title" content="Global Income Comparison">
+  <meta property="og:description" content="See how your salary ranks worldwide">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://globalsalary.fun/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta name="theme-color" content="#5b7fff">
+  <meta name="theme-color" content="#1a1a2e">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="page">
     <header class="header">
-      <h1>你的收入在全球算什么水平？</h1>
-      <p>输入月薪，查看你在 10 个国家的财富排名</p>
+      <div class="header-top">
+        <div class="logo">GlobalSalary<span class="logo-dot">.</span></div>
+        <div class="lang-switcher">
+          <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">
+            <span class="lang-icon">🌐</span>
+            <span id="current-lang">EN</span>
+          </button>
+          <div class="lang-dropdown" id="lang-dropdown">
+            <button data-lang="en" class="lang-option active">English</button>
+            <button data-lang="ja" class="lang-option">日本語</button>
+            <button data-lang="ko" class="lang-option">한국어</button>
+            <button data-lang="zh-CN" class="lang-option">中文</button>
+            <button data-lang="vi" class="lang-option">Tiếng Việt</button>
+            <button data-lang="hi" class="lang-option">हिन्दी</button>
+            <button data-lang="pt-BR" class="lang-option">Português (BR)</button>
+          </div>
+        </div>
+      </div>
     </header>
 
     <main>
+      <section class="hero">
+        <h1 class="hero-title" id="hero-title">What's Your Income Worth Worldwide?</h1>
+        <p class="hero-subtitle" id="hero-subtitle">Enter your monthly salary and see how you rank across 10 countries</p>
+      </section>
+
       <section class="input-section">
-        <div class="mode-toggle" id="mode-toggle">
-          <button class="mode-btn active" data-mode="monthly">月薪模式</button>
-          <button class="mode-btn" data-mode="hourly">时薪计时</button>
+        <div class="input-row">
+          <input type="number" id="amount" placeholder="Monthly salary" step="any" min="0.01" inputmode="decimal">
+          <select id="currency" aria-label="Currency">
+            <option value="CNY">🇨🇳 CNY</option>
+            <option value="USD">🇺🇸 USD</option>
+            <option value="EUR">🇪🇺 EUR</option>
+            <option value="GBP">🇬🇧 GBP</option>
+            <option value="JPY">🇯🇵 JPY</option>
+            <option value="RUB">🇷🇺 RUB</option>
+            <option value="INR">🇮🇳 INR</option>
+            <option value="VND">🇻🇳 VND</option>
+            <option value="IDR">🇮🇩 IDR</option>
+            <option value="BRL">🇧🇷 BRL</option>
+          </select>
         </div>
-
-        <!-- 月薪模式 -->
-        <div class="mode-panel" id="panel-monthly">
-          <div class="input-row">
-            <input type="number" id="amount" placeholder="输入月薪" step="any" min="0.01" inputmode="decimal">
-            <select id="currency">
-              <option value="CNY">🇨🇳 CNY</option>
-              <option value="USD">🇺🇸 USD</option>
-              <option value="EUR">🇪🇺 EUR</option>
-              <option value="GBP">🇬🇧 GBP</option>
-              <option value="JPY">🇯🇵 JPY</option>
-              <option value="RUB">🇷🇺 RUB</option>
-              <option value="INR">🇮🇳 INR</option>
-              <option value="VND">🇻🇳 VND</option>
-              <option value="IDR">🇮🇩 IDR</option>
-              <option value="BRL">🇧🇷 BRL</option>
-            </select>
-          </div>
-          <button class="calc-btn" id="calc-btn">计算全球排名</button>
-          <div class="quick-fills">
-            <button class="quick-fill" data-amount="5000" data-currency="CNY">5000 CNY</button>
-            <button class="quick-fill" data-amount="10000" data-currency="CNY">10000 CNY</button>
-            <button class="quick-fill" data-amount="3000" data-currency="USD">3000 USD</button>
-            <button class="quick-fill" data-amount="5000" data-currency="USD">5000 USD</button>
-          </div>
-        </div>
-
-        <!-- 时薪计时模式 -->
-        <div class="mode-panel" id="panel-hourly" style="display:none">
-          <div class="input-row">
-            <input type="number" id="hourly-rate" placeholder="输入时薪" step="any" min="0.01" inputmode="decimal">
-            <select id="hourly-currency">
-              <option value="CNY">🇨🇳 CNY</option>
-              <option value="USD">🇺🇸 USD</option>
-              <option value="EUR">🇪🇺 EUR</option>
-              <option value="GBP">🇬🇧 GBP</option>
-              <option value="JPY">🇯🇵 JPY</option>
-              <option value="RUB">🇷🇺 RUB</option>
-              <option value="INR">🇮🇳 INR</option>
-              <option value="VND">🇻🇳 VND</option>
-              <option value="IDR">🇮🇩 IDR</option>
-              <option value="BRL">🇧🇷 BRL</option>
-            </select>
-          </div>
-          <div class="timer-display" id="timer-display">
-            <div class="timer-amount" id="timer-amount">0.00</div>
-            <div class="timer-label" id="timer-label">准备开始</div>
-            <div class="timer-elapsed" id="timer-elapsed">00:00:00</div>
-          </div>
-          <div class="timer-controls">
-            <button class="timer-btn start" id="timer-start">开始计时</button>
-            <button class="timer-btn pause" id="timer-pause" style="display:none">暂停</button>
-            <button class="timer-btn reset" id="timer-reset">重置</button>
-          </div>
-          <div class="quick-fills">
-            <button class="quick-fill hourly-fill" data-rate="50" data-currency="CNY">50 CNY/h</button>
-            <button class="quick-fill hourly-fill" data-rate="100" data-currency="CNY">100 CNY/h</button>
-            <button class="quick-fill hourly-fill" data-rate="25" data-currency="USD">25 USD/h</button>
-            <button class="quick-fill hourly-fill" data-rate="50" data-currency="USD">50 USD/h</button>
-          </div>
+        <button class="calc-btn" id="calc-btn">Calculate Global Ranking</button>
+        <div class="quick-fills" id="quick-fills">
+          <button class="quick-fill" data-amount="5000" data-currency="CNY">¥5,000 CNY</button>
+          <button class="quick-fill" data-amount="10000" data-currency="CNY">¥10,000 CNY</button>
+          <button class="quick-fill" data-amount="3000" data-currency="USD">$3,000 USD</button>
+          <button class="quick-fill" data-amount="5000" data-currency="USD">$5,000 USD</button>
+          <button class="quick-fill" data-amount="500000" data-currency="JPY">¥500K JPY</button>
+          <button class="quick-fill" data-amount="50000" data-currency="INR">₹50K INR</button>
         </div>
       </section>
 
       <section class="results-section">
         <div id="capture-area">
-          <div class="capture-title">我的全球收入排行榜</div>
+          <div class="capture-title" id="rank-title">My Global Income Ranking</div>
           <div id="results-container">
-            <div class="empty-hint">输入你的月薪，看看在全球算什么水平</div>
+            <div class="empty-state">
+              <div class="empty-icon">🌍</div>
+              <div class="empty-hint" id="empty-hint">Enter your monthly salary to see your global ranking</div>
+            </div>
           </div>
         </div>
         <div class="share-actions" id="share-actions" style="display:none">
-          <button class="share-btn" id="share-img-btn">生成分享图片</button>
+          <button class="share-btn" id="share-img-btn">
+            <span class="share-icon">📸</span>
+            <span id="share-text">Generate Share Image</span>
+          </button>
         </div>
       </section>
 
-      <aside class="ad-container" id="ad-container" aria-label="广告">
-        <div class="ad-placeholder" id="ad-placeholder">
-          <span class="ad-label">广告</span>
+      <aside class="ad-container" aria-label="Advertisement">
+        <div class="ad-placeholder">
+          <span class="ad-label">Advertisement</span>
         </div>
       </aside>
 
       <footer class="disclaimer">
-        <p>数据仅供娱乐参考，不构成财务建议。</p>
-        <p>汇率基准：<span id="data-date">--</span> · 数据来源：Frankfurter API / 世界银行 / IMF</p>
-        <p>购买力平价(PPP)基于世界银行ICP数据计算。</p>
+        <p id="disc-1">This tool is for entertainment only. Not financial advice.</p>
+        <p><span id="disc-2">Exchange rate date:</span> <span id="data-date">--</span> · <span id="disc-3">Data sources: Frankfurter API / World Bank / IMF</span></p>
+        <p id="disc-4">PPP based on World Bank ICP data.</p>
       </footer>
     </main>
   </div>
 
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/exchange.js"></script>
   <script src="js/levels.js"></script>
   <script src="js/characters.js"></script>
-  <script src="js/timer.js"></script>
   <script src="js/share.js"></script>
   <script src="js/render.js"></script>
   <script src="js/main.js"></script>
