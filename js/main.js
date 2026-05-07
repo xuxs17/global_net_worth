@@ -117,7 +117,7 @@
 
       return {
         countryCode: code,
-        countryName: country.countryName,
+        countryName: I18n.countryName(code),
         currencyCode: country.currencyCode,
         flagEmoji: RenderModule.countryCodeToFlag(code),
         convertedAmount,

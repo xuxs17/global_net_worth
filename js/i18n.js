@@ -190,6 +190,20 @@ const I18n = (() => {
     },
   };
 
+  // Country names by code
+  const countryNames = {
+    US: { en: 'United States', ja: 'アメリカ', ko: '미국', 'zh-CN': '美国', vi: 'Hoa Kỳ', hi: 'संयुक्त राज्य', 'pt-BR': 'Estados Unidos' },
+    GB: { en: 'United Kingdom', ja: 'イギリス', ko: '영국', 'zh-CN': '英国', vi: 'Vương Quốc Anh', hi: 'यूनाइटेड किंगडम', 'pt-BR': 'Reino Unido' },
+    DE: { en: 'Germany', ja: 'ドイツ', ko: '독일', 'zh-CN': '德国', vi: 'Đức', hi: 'जर्मनी', 'pt-BR': 'Alemanha' },
+    JP: { en: 'Japan', ja: '日本', ko: '일본', 'zh-CN': '日本', vi: 'Nhật Bản', hi: 'जापान', 'pt-BR': 'Japão' },
+    CN: { en: 'China', ja: '中国', ko: '중국', 'zh-CN': '中国', vi: 'Trung Quốc', hi: 'चीन', 'pt-BR': 'China' },
+    RU: { en: 'Russia', ja: 'ロシア', ko: '러시아', 'zh-CN': '俄罗斯', vi: 'Nga', hi: 'रूस', 'pt-BR': 'Rússia' },
+    IN: { en: 'India', ja: 'インド', ko: '인도', 'zh-CN': '印度', vi: 'Ấn Độ', hi: 'भारत', 'pt-BR': 'Índia' },
+    VN: { en: 'Vietnam', ja: 'ベトナム', ko: '베트남', 'zh-CN': '越南', vi: 'Việt Nam', hi: 'वियतनाम', 'pt-BR': 'Vietnã' },
+    ID: { en: 'Indonesia', ja: 'インドネシア', ko: '인도네시아', 'zh-CN': '印度尼西亚', vi: 'Indonesia', hi: 'इंडोनेशिया', 'pt-BR': 'Indonésia' },
+    BR: { en: 'Brazil', ja: 'ブラジル', ko: '브라질', 'zh-CN': '巴西', vi: 'Brasil', hi: 'ब्राज़ील', 'pt-BR': 'Brasil' },
+  };
+
   let currentLang = 'en';
 
   function detectLang() {
@@ -220,11 +234,15 @@ const I18n = (() => {
     return (levelLabels[currentLang] || levelLabels['en'])[levelKey] || levelKey;
   }
 
+  function countryName(code) {
+    return (countryNames[code] || {})[currentLang] || (countryNames[code] || {}).en || code;
+  }
+
   function getLang() { return currentLang; }
 
   // Initialize — always default to English
   currentLang = 'en';
   document.documentElement.lang = currentLang;
 
-  return { setLang, t, levelLabel, getLang, translations, levelLabels };
+  return { setLang, t, levelLabel, countryName, getLang, translations, levelLabels };
 })();
