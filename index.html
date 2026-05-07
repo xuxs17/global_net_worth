@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全球收入水平对比 — 你的工资在全球算什么水平？</title>
+  <meta name="description" content="输入你的月薪，看看在全球10个国家的财富等级排行榜。支持购买力平价(PPP)对比，趣味动画角色呈现。">
+  <meta property="og:title" content="全球收入水平对比计算器">
+  <meta property="og:description" content="看看你的工资在全球算什么水平">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <h1>你的收入在全球算什么水平？</h1>
+      <p>输入月薪，查看你在 10 个国家的财富排名</p>
+    </header>
+
+    <main>
+      <section class="input-section">
+        <div class="input-row">
+          <input type="number" id="amount" placeholder="输入月薪" step="any" min="0.01" inputmode="decimal">
+          <select id="currency">
+            <option value="CNY">🇨🇳 CNY</option>
+            <option value="USD">🇺🇸 USD</option>
+            <option value="EUR">🇪🇺 EUR</option>
+            <option value="GBP">🇬🇧 GBP</option>
+            <option value="JPY">🇯🇵 JPY</option>
+            <option value="RUB">🇷🇺 RUB</option>
+            <option value="INR">🇮🇳 INR</option>
+            <option value="VND">🇻🇳 VND</option>
+            <option value="IDR">🇮🇩 IDR</option>
+            <option value="BRL">🇧🇷 BRL</option>
+          </select>
+        </div>
+        <button class="calc-btn" id="calc-btn">计算全球排名</button>
+        <div class="quick-fills">
+          <button class="quick-fill" data-amount="5000" data-currency="CNY">5000 CNY</button>
+          <button class="quick-fill" data-amount="10000" data-currency="CNY">10000 CNY</button>
+          <button class="quick-fill" data-amount="3000" data-currency="USD">3000 USD</button>
+          <button class="quick-fill" data-amount="5000" data-currency="USD">5000 USD</button>
+        </div>
+      </section>
+
+      <section class="results-section" id="results-container">
+        <div class="empty-hint">输入你的月薪，看看在全球算什么水平</div>
+      </section>
+
+      <footer class="disclaimer">
+        <p>数据仅供娱乐参考，不构成财务建议。</p>
+        <p>汇率基准：<span id="data-date">--</span> · 数据来源：Frankfurter API / 世界银行 / IMF</p>
+        <p>购买力平价(PPP)基于世界银行ICP数据计算。</p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="js/exchange.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/characters.js"></script>
+  <script src="js/share.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

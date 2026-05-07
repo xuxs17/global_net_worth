@@ -1,0 +1,82 @@
+{
+  "US": {
+    "countryName": "美国",
+    "currencyCode": "USD",
+    "gni_per_capita": 80400,
+    "gdp_per_capita": 89200,
+    "ppp_conversion_factor": 1.0,
+    "average_monthly_salary": 6562
+  },
+  "GB": {
+    "countryName": "英国",
+    "currencyCode": "GBP",
+    "gni_per_capita": 48600,
+    "gdp_per_capita": 52300,
+    "ppp_conversion_factor": 0.69,
+    "average_monthly_salary": 3290
+  },
+  "DE": {
+    "countryName": "德国",
+    "currencyCode": "EUR",
+    "gni_per_capita": 54200,
+    "gdp_per_capita": 55200,
+    "ppp_conversion_factor": 0.76,
+    "average_monthly_salary": 3980
+  },
+  "JP": {
+    "countryName": "日本",
+    "currencyCode": "JPY",
+    "gni_per_capita": 39100,
+    "gdp_per_capita": 34200,
+    "ppp_conversion_factor": 103.5,
+    "average_monthly_salary": 3150
+  },
+  "CN": {
+    "countryName": "中国",
+    "currencyCode": "CNY",
+    "gni_per_capita": 13400,
+    "gdp_per_capita": 13300,
+    "ppp_conversion_factor": 3.98,
+    "average_monthly_salary": 1150
+  },
+  "RU": {
+    "countryName": "俄罗斯",
+    "currencyCode": "RUB",
+    "gni_per_capita": 14200,
+    "gdp_per_capita": 14500,
+    "ppp_conversion_factor": 29.5,
+    "average_monthly_salary": 780
+  },
+  "IN": {
+    "countryName": "印度",
+    "currencyCode": "INR",
+    "gni_per_capita": 2830,
+    "gdp_per_capita": 2900,
+    "ppp_conversion_factor": 22.5,
+    "average_monthly_salary": 330
+  },
+  "VN": {
+    "countryName": "越南",
+    "currencyCode": "VND",
+    "gni_per_capita": 4280,
+    "gdp_per_capita": 4600,
+    "ppp_conversion_factor": 7800,
+    "average_monthly_salary": 360
+  },
+  "ID": {
+    "countryName": "印度尼西亚",
+    "currencyCode": "IDR",
+    "gni_per_capita": 4960,
+    "gdp_per_capita": 5300,
+    "ppp_conversion_factor": 4950,
+    "average_monthly_salary": 350
+  },
+  "BR": {
+    "countryName": "巴西",
+    "currencyCode": "BRL",
+    "gni_per_capita": 9350,
+    "gdp_per_capita": 10400,
+    "ppp_conversion_factor": 2.55,
+    "average_monthly_salary": 590
+  }
+}
