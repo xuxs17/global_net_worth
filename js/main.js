@@ -67,9 +67,6 @@
       targetCountries = Object.keys(baseline);
       ready = true;
 
-      updateUIText();
-      updateLangDisplay();
-
       const saved = ShareModule.readURLParams();
       if (saved) {
         el('amount').value = saved.amount;
@@ -168,6 +165,10 @@
   el('share-img-btn').addEventListener('click', () => {
     ShareModule.captureImage();
   });
+
+  // Apply detected language immediately (before async data load)
+  updateUIText();
+  updateLangDisplay();
 
   init();
 })();
