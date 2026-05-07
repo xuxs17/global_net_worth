@@ -222,8 +222,8 @@ const I18n = (() => {
 
   function getLang() { return currentLang; }
 
-  // Initialize
-  currentLang = detectLang();
+  // Initialize — always default to English
+  currentLang = 'en';
   document.documentElement.lang = currentLang;
 
   return { setLang, t, levelLabel, getLang, translations, levelLabels };
