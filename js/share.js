@@ -20,35 +20,50 @@ const ShareModule = (() => {
     const el = document.getElementById('capture-area');
     if (!el || !window.html2canvas) return;
 
+    const btn = document.getElementById('share-img-btn');
+    const originalHTML = btn.innerHTML;
+
     try {
+      btn.innerHTML = '<span class="share-icon">⏳</span> <span id="share-text">Capturing...</span>';
+      btn.disabled = true;
+
       const canvas = await html2canvas(el, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
       });
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      const url = URL.createObjectURL(blob);
 
-      if (navigator.share && navigator.canShare) {
-        const file = new File([blob], 'global-salary-fun.png', { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: '我的全球收入排行榜',
-            text: '看看你的工资在全球算什么水平？',
-            files: [file],
-          });
-          return;
-        }
+      let copied = false;
+      try {
+        await navigator.clipboard.write([
+          new ClipboardItem({ 'image/png': blob }),
+        ]);
+        copied = true;
+      } catch (_) {
+        // Clipboard write not supported — fall through to download
       }
-      // fallback: direct download
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'global-salary-fun.png';
-      a.click();
-      URL.revokeObjectURL(url);
+
+      if (copied) {
+        btn.innerHTML = '<span class="share-icon">✅</span> <span id="share-text">Copied!</span>';
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        }, 2000);
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'global-salary-fun.png';
+        a.click();
+        URL.revokeObjectURL(url);
+        btn.innerHTML = originalHTML;
+        btn.disabled = false;
+      }
     } catch (e) {
-      // user cancelled share
-      if (e.name !== 'AbortError') console.error('Screenshot failed:', e);
+      console.error('Screenshot failed:', e);
+      btn.innerHTML = originalHTML;
+      btn.disabled = false;
     }
   }
 
