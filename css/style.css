@@ -113,6 +113,94 @@ body {
   background: #e8e8ff;
 }
 
+/* Mode toggle */
+.mode-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  background: #f0f0f5;
+  border-radius: 10px;
+  padding: 3px;
+}
+.mode-btn {
+  flex: 1;
+  height: 38px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #888;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-btn.active {
+  background: #fff;
+  color: #5b7fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Timer display */
+.timer-display {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  border-radius: 16px;
+  padding: 24px 20px;
+  text-align: center;
+  margin-top: 12px;
+  transition: box-shadow 0.3s;
+}
+.timer-display.active {
+  box-shadow: 0 0 24px rgba(91, 127, 255, 0.3);
+}
+.timer-amount {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.timer-label {
+  font-size: 0.85rem;
+  color: #8899bb;
+  margin-top: 6px;
+}
+.timer-elapsed {
+  font-size: 1.1rem;
+  color: #556688;
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.timer-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.timer-btn {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.timer-btn:active {
+  transform: scale(0.97);
+}
+.timer-btn.start {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+}
+.timer-btn.pause {
+  background: #f59e0b;
+  color: #fff;
+}
+.timer-btn.reset {
+  background: #e5e7eb;
+  color: #555;
+}
+
 /* Results */
 .results-section {
   min-height: 100px;

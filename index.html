@@ -19,27 +19,70 @@
 
     <main>
       <section class="input-section">
-        <div class="input-row">
-          <input type="number" id="amount" placeholder="输入月薪" step="any" min="0.01" inputmode="decimal">
-          <select id="currency">
-            <option value="CNY">🇨🇳 CNY</option>
-            <option value="USD">🇺🇸 USD</option>
-            <option value="EUR">🇪🇺 EUR</option>
-            <option value="GBP">🇬🇧 GBP</option>
-            <option value="JPY">🇯🇵 JPY</option>
-            <option value="RUB">🇷🇺 RUB</option>
-            <option value="INR">🇮🇳 INR</option>
-            <option value="VND">🇻🇳 VND</option>
-            <option value="IDR">🇮🇩 IDR</option>
-            <option value="BRL">🇧🇷 BRL</option>
-          </select>
+        <div class="mode-toggle" id="mode-toggle">
+          <button class="mode-btn active" data-mode="monthly">月薪模式</button>
+          <button class="mode-btn" data-mode="hourly">时薪计时</button>
         </div>
-        <button class="calc-btn" id="calc-btn">计算全球排名</button>
-        <div class="quick-fills">
-          <button class="quick-fill" data-amount="5000" data-currency="CNY">5000 CNY</button>
-          <button class="quick-fill" data-amount="10000" data-currency="CNY">10000 CNY</button>
-          <button class="quick-fill" data-amount="3000" data-currency="USD">3000 USD</button>
-          <button class="quick-fill" data-amount="5000" data-currency="USD">5000 USD</button>
+
+        <!-- 月薪模式 -->
+        <div class="mode-panel" id="panel-monthly">
+          <div class="input-row">
+            <input type="number" id="amount" placeholder="输入月薪" step="any" min="0.01" inputmode="decimal">
+            <select id="currency">
+              <option value="CNY">🇨🇳 CNY</option>
+              <option value="USD">🇺🇸 USD</option>
+              <option value="EUR">🇪🇺 EUR</option>
+              <option value="GBP">🇬🇧 GBP</option>
+              <option value="JPY">🇯🇵 JPY</option>
+              <option value="RUB">🇷🇺 RUB</option>
+              <option value="INR">🇮🇳 INR</option>
+              <option value="VND">🇻🇳 VND</option>
+              <option value="IDR">🇮🇩 IDR</option>
+              <option value="BRL">🇧🇷 BRL</option>
+            </select>
+          </div>
+          <button class="calc-btn" id="calc-btn">计算全球排名</button>
+          <div class="quick-fills">
+            <button class="quick-fill" data-amount="5000" data-currency="CNY">5000 CNY</button>
+            <button class="quick-fill" data-amount="10000" data-currency="CNY">10000 CNY</button>
+            <button class="quick-fill" data-amount="3000" data-currency="USD">3000 USD</button>
+            <button class="quick-fill" data-amount="5000" data-currency="USD">5000 USD</button>
+          </div>
+        </div>
+
+        <!-- 时薪计时模式 -->
+        <div class="mode-panel" id="panel-hourly" style="display:none">
+          <div class="input-row">
+            <input type="number" id="hourly-rate" placeholder="输入时薪" step="any" min="0.01" inputmode="decimal">
+            <select id="hourly-currency">
+              <option value="CNY">🇨🇳 CNY</option>
+              <option value="USD">🇺🇸 USD</option>
+              <option value="EUR">🇪🇺 EUR</option>
+              <option value="GBP">🇬🇧 GBP</option>
+              <option value="JPY">🇯🇵 JPY</option>
+              <option value="RUB">🇷🇺 RUB</option>
+              <option value="INR">🇮🇳 INR</option>
+              <option value="VND">🇻🇳 VND</option>
+              <option value="IDR">🇮🇩 IDR</option>
+              <option value="BRL">🇧🇷 BRL</option>
+            </select>
+          </div>
+          <div class="timer-display" id="timer-display">
+            <div class="timer-amount" id="timer-amount">0.00</div>
+            <div class="timer-label" id="timer-label">准备开始</div>
+            <div class="timer-elapsed" id="timer-elapsed">00:00:00</div>
+          </div>
+          <div class="timer-controls">
+            <button class="timer-btn start" id="timer-start">开始计时</button>
+            <button class="timer-btn pause" id="timer-pause" style="display:none">暂停</button>
+            <button class="timer-btn reset" id="timer-reset">重置</button>
+          </div>
+          <div class="quick-fills">
+            <button class="quick-fill hourly-fill" data-rate="50" data-currency="CNY">50 CNY/h</button>
+            <button class="quick-fill hourly-fill" data-rate="100" data-currency="CNY">100 CNY/h</button>
+            <button class="quick-fill hourly-fill" data-rate="25" data-currency="USD">25 USD/h</button>
+            <button class="quick-fill hourly-fill" data-rate="50" data-currency="USD">50 USD/h</button>
+          </div>
         </div>
       </section>
 
@@ -73,6 +116,7 @@
   <script src="js/exchange.js"></script>
   <script src="js/levels.js"></script>
   <script src="js/characters.js"></script>
+  <script src="js/timer.js"></script>
   <script src="js/share.js"></script>
   <script src="js/render.js"></script>
   <script src="js/main.js"></script>
