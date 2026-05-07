@@ -40,7 +40,6 @@ const TimerModule = (() => {
 
     // update monthly projection label
     const monthlyRate = hourlyRate * 176; // ~22d * 8h
-    const currencySymbol = el('hourly-currency').selectedOptions[0]?.textContent.split(' ')[0] || currency;
     el('timer-label').textContent = `≈ 月薪 ${monthlyRate.toLocaleString('zh-CN', {maximumFractionDigits: 0})} ${currency}`;
 
     if (totalMs >= 60000) {
