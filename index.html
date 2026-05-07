@@ -23,7 +23,7 @@
     <header class="header">
       <div class="header-top">
         <div class="logo">GlobalSalary<span class="logo-dot">.</span></div>
-        <div class="lang-switcher">
+        <div class="lang-switcher" id="lang-switcher">
           <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">
             <span class="lang-icon">🌐</span>
             <span id="current-lang">EN</span>
@@ -51,16 +51,16 @@
         <div class="input-row">
           <input type="number" id="amount" placeholder="Monthly salary" step="any" min="0.01" inputmode="decimal">
           <select id="currency" aria-label="Currency">
-            <option value="CNY">🇨🇳 CNY</option>
             <option value="USD">🇺🇸 USD</option>
             <option value="EUR">🇪🇺 EUR</option>
             <option value="GBP">🇬🇧 GBP</option>
             <option value="JPY">🇯🇵 JPY</option>
-            <option value="RUB">🇷🇺 RUB</option>
+            <option value="CNY">🇨🇳 CNY</option>
             <option value="INR">🇮🇳 INR</option>
+            <option value="BRL">🇧🇷 BRL</option>
             <option value="VND">🇻🇳 VND</option>
             <option value="IDR">🇮🇩 IDR</option>
-            <option value="BRL">🇧🇷 BRL</option>
+            <option value="RUB">🇷🇺 RUB</option>
           </select>
         </div>
         <button class="calc-btn" id="calc-btn">Calculate Global Ranking</button>

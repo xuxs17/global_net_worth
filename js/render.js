@@ -54,7 +54,7 @@ const RenderModule = (() => {
     if (!container()) return;
     container().innerHTML = `<div class="error-message">${msg}</div>`;
     if (captureTitle()) captureTitle().style.display = 'none';
-    if (shareActions()) shareActions.style.display = 'none';
+    if (shareActions()) shareActions().style.display = 'none';
   }
 
   function renderEmpty() {
@@ -65,7 +65,7 @@ const RenderModule = (() => {
         <div class="empty-hint">${I18n.t('emptyHint')}</div>
       </div>`;
     if (captureTitle()) captureTitle().style.display = 'none';
-    if (shareActions()) shareActions.style.display = 'none';
+    if (shareActions()) shareActions().style.display = 'none';
   }
 
   return { countryCodeToFlag, formatAmount, renderCards, renderError, renderEmpty };
