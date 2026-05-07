@@ -1,6 +1,9 @@
 const RenderModule = (() => {
   const container = () => document.getElementById('results-container');
+  const captureArea = () => document.getElementById('capture-area');
+  const captureTitle = () => document.querySelector('.capture-title');
   const disclaimerDate = () => document.getElementById('data-date');
+  const shareActions = () => document.getElementById('share-actions');
 
   function countryCodeToFlag(code) {
     return String.fromCodePoint(...code.toUpperCase().split('').map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
@@ -15,9 +18,10 @@ const RenderModule = (() => {
     });
   }
 
-  function renderCards(results, ratioNominal) {
+  function renderCards(results) {
     if (!container()) return;
     container().innerHTML = '';
+    if (captureTitle()) captureTitle().style.display = 'block';
 
     const sorted = [...results].sort((a, b) => b.ratio - a.ratio);
 
@@ -50,11 +54,15 @@ const RenderModule = (() => {
   function renderError(msg) {
     if (!container()) return;
     container().innerHTML = `<div class="error-message">${msg}</div>`;
+    if (captureTitle()) captureTitle().style.display = 'none';
+    if (shareActions()) shareActions.style.display = 'none';
   }
 
   function renderEmpty() {
     if (!container()) return;
     container().innerHTML = `<div class="empty-hint">输入你的月薪，看看在全球算什么水平</div>`;
+    if (captureTitle()) captureTitle().style.display = 'none';
+    if (shareActions()) shareActions.style.display = 'none';
   }
 
   return { countryCodeToFlag, formatAmount, renderCards, renderError, renderEmpty };

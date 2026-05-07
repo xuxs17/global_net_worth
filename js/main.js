@@ -71,6 +71,7 @@
 
       RenderModule.renderCards(results);
       ShareModule.updateURL(amount, fromCurrency);
+      document.getElementById('share-actions').style.display = 'flex';
     } catch (e) {
       RenderModule.renderError('计算出错，请检查输入');
       console.error(e);
@@ -97,6 +98,11 @@
     if (amount > 0) {
       ShareModule.updateURL(amount, currencySelect.value);
     }
+  });
+
+  // share image button
+  document.getElementById('share-img-btn').addEventListener('click', () => {
+    ShareModule.captureImage();
   });
 
   // quick fill buttons

@@ -43,8 +43,16 @@
         </div>
       </section>
 
-      <section class="results-section" id="results-container">
-        <div class="empty-hint">输入你的月薪，看看在全球算什么水平</div>
+      <section class="results-section">
+        <div id="capture-area">
+          <div class="capture-title">我的全球收入排行榜</div>
+          <div id="results-container">
+            <div class="empty-hint">输入你的月薪，看看在全球算什么水平</div>
+          </div>
+        </div>
+        <div class="share-actions" id="share-actions" style="display:none">
+          <button class="share-btn" id="share-img-btn">生成分享图片</button>
+        </div>
       </section>
 
       <footer class="disclaimer">
@@ -55,6 +63,7 @@
     </main>
   </div>
 
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script src="js/exchange.js"></script>
   <script src="js/levels.js"></script>
   <script src="js/characters.js"></script>
