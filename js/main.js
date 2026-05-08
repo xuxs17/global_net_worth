@@ -6,19 +6,27 @@
   const el = (id) => document.getElementById(id);
 
   // --- Update all UI text for current language ---
+  function setText(id, text) {
+    const e = el(id);
+    if (e) e.textContent = text;
+  }
+  function setPlaceholder(id, text) {
+    const e = el(id);
+    if (e) e.placeholder = text;
+  }
   function updateUIText() {
-    el('hero-title').textContent = I18n.t('title');
-    el('hero-subtitle').textContent = I18n.t('subtitle');
-    el('amount').placeholder = I18n.t('amountPlaceholder');
-    el('calc-btn').textContent = I18n.t('calcBtn');
-    el('empty-hint').textContent = I18n.t('emptyHint');
-    el('rank-title').textContent = I18n.t('rankTitle');
-    el('share-text').textContent = I18n.t('shareBtn');
-    el('disc-1').textContent = I18n.t('disclaimer1');
-    el('disc-2').textContent = I18n.t('disclaimer2');
-    el('disc-3').textContent = I18n.t('disclaimer3');
-    el('disc-4').textContent = I18n.t('disclaimer4');
-    el('current-lang').textContent = I18n.getLang().toUpperCase().replace('-', '-');
+    setText('hero-title', I18n.t('title'));
+    setText('hero-subtitle', I18n.t('subtitle'));
+    setPlaceholder('amount', I18n.t('amountPlaceholder'));
+    setText('calc-btn', I18n.t('calcBtn'));
+    setText('empty-hint', I18n.t('emptyHint'));
+    setText('rank-title', I18n.t('rankTitle'));
+    setText('share-text', I18n.t('shareBtn'));
+    setText('disc-1', I18n.t('disclaimer1'));
+    setText('disc-2', I18n.t('disclaimer2'));
+    setText('disc-3', I18n.t('disclaimer3'));
+    setText('disc-4', I18n.t('disclaimer4'));
+    setText('current-lang', I18n.getLang().toUpperCase().replace('-', '-'));
   }
 
   // --- Language switcher ---
@@ -46,6 +54,7 @@
       I18n.setLang(btn.dataset.lang);
       updateLangDisplay();
       updateUIText();
+      el('currency').value = I18n.getDefaultCurrency(btn.dataset.lang);
       el('lang-dropdown').classList.remove('open');
       // Re-render results if any
       if (el('share-actions').style.display !== 'none') {
@@ -169,6 +178,7 @@
   // Apply detected language immediately (before async data load)
   updateUIText();
   updateLangDisplay();
+  el('currency').value = I18n.getDefaultCurrency(I18n.getLang());
 
   init();
 })();

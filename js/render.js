@@ -62,7 +62,7 @@ const RenderModule = (() => {
     container().innerHTML = `
       <div class="empty-state">
         <div class="empty-icon">🌍</div>
-        <div class="empty-hint">${I18n.t('emptyHint')}</div>
+        <div class="empty-hint" id="empty-hint">${I18n.t('emptyHint')}</div>
       </div>`;
     if (captureTitle()) captureTitle().style.display = 'none';
     if (shareActions()) shareActions().style.display = 'none';

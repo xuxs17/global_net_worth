@@ -204,6 +204,12 @@ const I18n = (() => {
     BR: { en: 'Brazil', ja: 'ブラジル', ko: '브라질', 'zh-CN': '巴西', vi: 'Brasil', hi: 'ब्राज़ील', 'pt-BR': 'Brasil' },
   };
 
+  // Language → default currency
+  const langCurrency = {
+    en: 'USD', ja: 'JPY', ko: 'USD', 'zh-CN': 'CNY',
+    vi: 'VND', hi: 'INR', 'pt-BR': 'BRL',
+  };
+
   let currentLang = 'en';
 
   function detectLang() {
@@ -238,11 +244,15 @@ const I18n = (() => {
     return (countryNames[code] || {})[currentLang] || (countryNames[code] || {}).en || code;
   }
 
+  function getDefaultCurrency(lang) {
+    return langCurrency[lang] || 'USD';
+  }
+
   function getLang() { return currentLang; }
 
   // Initialize — always default to English
   currentLang = 'en';
   document.documentElement.lang = currentLang;
 
-  return { setLang, t, levelLabel, countryName, getLang, translations, levelLabels };
+  return { setLang, t, levelLabel, countryName, getDefaultCurrency, getLang, translations, levelLabels };
 })();
