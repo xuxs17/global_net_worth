@@ -30,6 +30,19 @@ const ShareModule = (() => {
     toast._tid = setTimeout(() => toast.classList.remove('show'), 2500);
   }
 
+  // Fetch and cache the CSS text for injection into cloned document
+  let _cssText = null;
+  async function getCSSText() {
+    if (_cssText) return _cssText;
+    try {
+      const resp = await fetch('css/style.css');
+      _cssText = await resp.text();
+      return _cssText;
+    } catch (_) {
+      return '';
+    }
+  }
+
   async function captureImage() {
     const el = document.getElementById('capture-area');
     if (!el || !window.html2canvas) return;
@@ -41,71 +54,40 @@ const ShareModule = (() => {
       btn.innerHTML = '<span class="share-icon">⏳</span> <span id="share-text">Capturing...</span>';
       btn.disabled = true;
 
+      const cssText = await getCSSText();
+
       const canvas = await html2canvas(el, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
         allowTaint: true,
         onclone: (clonedDoc) => {
+          // Inject the full CSS so ALL elements keep their styles
+          if (cssText) {
+            const styleEl = clonedDoc.createElement('style');
+            styleEl.textContent = cssText;
+            clonedDoc.head.appendChild(styleEl);
+          }
+
+          // Fix the capture area for clean output
           const area = clonedDoc.getElementById('capture-area');
           if (!area) return;
-          // Force explicit styles for reliable rendering
           area.style.width = '640px';
           area.style.background = '#ffffff';
           area.style.border = 'none';
           area.style.borderRadius = '0';
           area.style.padding = '24px 24px 20px';
-          area.style.boxSizing = 'border-box';
 
-          // Show the title
+          // Ensure title is visible
           const title = area.querySelector('.capture-title');
           if (title) {
             title.style.display = 'block';
-            title.style.fontFamily = 'Georgia, "Times New Roman", serif';
-            title.style.fontSize = '20px';
-            title.style.fontWeight = '700';
-            title.style.color = '#1a1a2e';
-            title.style.textAlign = 'center';
-            title.style.padding = '8px 0 16px';
           }
 
-          // Fix cards
+          // Freeze all animations at their final frame
           area.querySelectorAll('.result-card').forEach(card => {
             card.style.animation = 'none';
-            card.style.background = '#faf8f5';
-            card.style.border = '1px solid #f0ece6';
-            card.style.borderRadius = '14px';
-            card.style.padding = '16px 18px';
-            card.style.marginBottom = '8px';
-            card.style.display = 'flex';
-            card.style.alignItems = 'center';
-            card.style.gap = '14px';
           });
-
-          // Fix fonts — use web-safe fallbacks
-          area.querySelectorAll('*').forEach(node => {
-            if (node.style) {
-              node.style.fontFamily = node.style.fontFamily
-                .replace(/'Playfair Display',\s*/g, '')
-                .replace(/'Inter',\s*/g, '')
-                .replace(/-apple-system,\s*/g, '')
-                .replace(/BlinkMacSystemFont,\s*/g, '');
-              if (!node.style.fontFamily || node.style.fontFamily === '') {
-                node.style.fontFamily = 'Georgia, "Times New Roman", serif';
-              }
-              // Force visible colors
-              const cs = window.getComputedStyle(node);
-              if (cs.color === 'rgb(250, 248, 245)' || cs.color === '#faf8f5') {
-                node.style.color = '#1a1a2e';
-              }
-            }
-          });
-
-          // Ensure rank title is visible
-          const rankTitle = area.querySelector('#rank-title') || area.querySelector('.capture-title');
-          if (rankTitle && !rankTitle.textContent) {
-            rankTitle.textContent = 'Global Income Ranking';
-          }
         },
       });
 
