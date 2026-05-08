@@ -14,10 +14,13 @@
     const e = el(id);
     if (e) e.placeholder = text;
   }
+  function updateCurrencyPlaceholder() {
+    const c = el('currency').value;
+    setPlaceholder('amount', `${I18n.t('amountPlaceholder')} (${c})`);
+  }
   function updateUIText() {
     setText('hero-title', I18n.t('title'));
     setText('hero-subtitle', I18n.t('subtitle'));
-    setPlaceholder('amount', I18n.t('amountPlaceholder'));
     setText('calc-btn', I18n.t('calcBtn'));
     setText('empty-hint', I18n.t('emptyHint'));
     setText('rank-title', I18n.t('rankTitle'));
@@ -55,6 +58,7 @@
       updateLangDisplay();
       updateUIText();
       el('currency').value = I18n.getDefaultCurrency(btn.dataset.lang);
+      updateCurrencyPlaceholder();
       el('lang-dropdown').classList.remove('open');
       // Re-render results if any
       if (el('share-actions').style.display !== 'none') {
@@ -157,6 +161,7 @@
     }
   });
   el('currency').addEventListener('change', () => {
+    updateCurrencyPlaceholder();
     const amount = parseFloat(el('amount').value);
     if (amount > 0) ShareModule.updateURL(amount, el('currency').value);
   });
@@ -179,6 +184,7 @@
   updateUIText();
   updateLangDisplay();
   el('currency').value = I18n.getDefaultCurrency(I18n.getLang());
+  updateCurrencyPlaceholder();
 
   init();
 })();
