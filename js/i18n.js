@@ -17,7 +17,7 @@ const I18n = (() => {
       disclaimer3: 'Data sources: Frankfurter API / World Bank / IMF',
       disclaimer4: 'PPP based on World Bank ICP data.',
       rankTitle: 'My Global Income Ranking',
-      modeMonthly: 'Monthly',
+      pppPrefix: 'PPP',
     },
     ja: {
       title: 'あなたの収入は世界でどのレベル？',
@@ -34,7 +34,7 @@ const I18n = (() => {
       disclaimer3: 'データソース: Frankfurter API / 世界銀行 / IMF',
       disclaimer4: 'PPPは世界銀行ICPデータに基づきます。',
       rankTitle: '世界収入ランキング',
-      modeMonthly: '月収',
+      pppPrefix: 'PPP',
     },
     vi: {
       title: 'Thu Nhập của Bạn Xếp Hạng Thế Nào Trên Thế Giới?',
@@ -51,7 +51,7 @@ const I18n = (() => {
       disclaimer3: 'Nguồn dữ liệu: Frankfurter API / World Bank / IMF',
       disclaimer4: 'PPP dựa trên dữ liệu ICP của World Bank.',
       rankTitle: 'Xếp Hạng Thu Nhập Toàn Cầu',
-      modeMonthly: 'Hàng tháng',
+      pppPrefix: 'PPP',
     },
     hi: {
       title: 'दुनिया भर में आपकी आय का स्तर क्या है?',
@@ -68,7 +68,7 @@ const I18n = (() => {
       disclaimer3: 'डेटा स्रोत: Frankfurter API / विश्व बैंक / IMF',
       disclaimer4: 'PPP विश्व बैंक ICP डेटा पर आधारित है।',
       rankTitle: 'मेरी वैश्विक आय रैंकिंग',
-      modeMonthly: 'मासिक',
+      pppPrefix: 'PPP',
     },
     'pt-BR': {
       title: 'Como Sua Renda Se Compara no Mundo?',
@@ -85,7 +85,7 @@ const I18n = (() => {
       disclaimer3: 'Fontes: Frankfurter API / Banco Mundial / FMI',
       disclaimer4: 'PPP baseado nos dados ICP do Banco Mundial.',
       rankTitle: 'Meu Ranking de Renda Global',
-      modeMonthly: 'Mensal',
+      pppPrefix: 'PPP',
     },
     'zh-CN': {
       title: '你的收入在全球算什么水平？',
@@ -102,7 +102,7 @@ const I18n = (() => {
       disclaimer3: '数据来源：Frankfurter API / 世界银行 / IMF',
       disclaimer4: '购买力平价(PPP)基于世界银行ICP数据计算。',
       rankTitle: '我的全球收入排行榜',
-      modeMonthly: '月薪',
+      pppPrefix: '购买力平价',
     },
     ko: {
       title: '당신의 수입은 세계에서 어느 수준일까요?',
@@ -119,7 +119,7 @@ const I18n = (() => {
       disclaimer3: '데이터 출처: Frankfurter API / 세계은행 / IMF',
       disclaimer4: 'PPP는 세계은행 ICP 데이터 기준.',
       rankTitle: '세계 수입 랭킹',
-      modeMonthly: '월급',
+      pppPrefix: 'PPP',
     },
   };
 
@@ -211,19 +211,6 @@ const I18n = (() => {
   };
 
   let currentLang = 'en';
-
-  function detectLang() {
-    const saved = localStorage.getItem(LS_KEY);
-    if (saved && translations[saved]) return saved;
-    const browser = navigator.language;
-    if (browser.startsWith('ja')) return 'ja';
-    if (browser.startsWith('vi')) return 'vi';
-    if (browser.startsWith('hi')) return 'hi';
-    if (browser.startsWith('pt')) return 'pt-BR';
-    if (browser.startsWith('zh')) return 'zh-CN';
-    if (browser.startsWith('ko')) return 'ko';
-    return 'en';
-  }
 
   function setLang(lang) {
     if (!translations[lang]) return;

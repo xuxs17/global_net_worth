@@ -48,10 +48,11 @@ const ShareModule = (() => {
     if (!el || !window.html2canvas) return;
 
     const btn = document.getElementById('share-img-btn');
+    if (!btn) return;
     const originalHTML = btn.innerHTML;
 
     try {
-      btn.innerHTML = '<span class="share-icon">⏳</span> <span id="share-text">Capturing...</span>';
+      btn.innerHTML = '<span class="share-icon">⏳</span> <span id="share-text">' + I18n.t('capturing') + '</span>';
       btn.disabled = true;
 
       const cssText = await getCSSText();
@@ -126,7 +127,7 @@ const ShareModule = (() => {
           a.download = 'global-salary-fun.png';
           a.click();
         }
-        setTimeout(() => URL.revokeObjectURL(url), 60000);
+        setTimeout(() => URL.revokeObjectURL(url), 600000);
         showToast('📥', 'Image ready! Long-press to save');
       }
     } catch (e) {

@@ -2,6 +2,7 @@
   let baseline = null;
   let targetCountries = [];
   let ready = false;
+  let resultsShowing = false;
 
   const el = (id) => document.getElementById(id);
 
@@ -61,9 +62,8 @@
       updateCurrencyPlaceholder();
       el('lang-dropdown').classList.remove('open');
       // Re-render results if any
-      if (el('share-actions').style.display !== 'none') {
+      if (resultsShowing) {
         const amount = parseFloat(el('amount').value);
-        const c = el('currency').value;
         if (amount > 0) calculateMonthly();
       }
     });
@@ -102,6 +102,7 @@
     const fromCurrency = el('currency').value;
 
     if (!amount || amount <= 0) {
+      resultsShowing = false;
       RenderModule.renderEmpty();
       return;
     }
@@ -111,7 +112,9 @@
       buildResults(amountInUSD);
       ShareModule.updateURL(amount, fromCurrency);
       el('share-actions').style.display = 'flex';
+      resultsShowing = true;
     } catch (e) {
+      resultsShowing = false;
       RenderModule.renderError(I18n.t('calcError'));
       console.error(e);
     }
@@ -154,11 +157,11 @@
   let debounceTimer;
   el('amount').addEventListener('input', () => {
     clearTimeout(debounceTimer);
-    const amount = parseFloat(el('amount').value);
-    const c = el('currency').value;
-    if (amount > 0) {
-      debounceTimer = setTimeout(() => ShareModule.updateURL(amount, c), 500);
-    }
+    debounceTimer = setTimeout(() => {
+      const amount = parseFloat(el('amount').value);
+      const c = el('currency').value;
+      if (amount > 0) ShareModule.updateURL(amount, c);
+    }, 500);
   });
   el('currency').addEventListener('change', () => {
     updateCurrencyPlaceholder();

@@ -6,7 +6,7 @@ const CharactersModule = (() => {
     middle:        '⭐',
     average:       '🙂',
     low:           '🌱',
-    very_low:      '🫤',
+    very_low:      '😐',
     extremely_low: '🍞',
   };
 
