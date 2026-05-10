@@ -18,6 +18,9 @@ const I18n = (() => {
       disclaimer4: 'PPP based on World Bank ICP data.',
       rankTitle: 'My Global Income Ranking',
       pppPrefix: 'PPP',
+      copied: 'Copied to clipboard!',
+      imageReady: 'Image ready! Long-press to save',
+      screenshotFailed: 'Screenshot failed',
     },
     ja: {
       title: 'あなたの収入は世界でどのレベル？',
@@ -35,6 +38,9 @@ const I18n = (() => {
       disclaimer4: 'PPPは世界銀行ICPデータに基づきます。',
       rankTitle: '世界収入ランキング',
       pppPrefix: 'PPP',
+      copied: 'クリップボードにコピーしました！',
+      imageReady: '画像の準備ができました！長押しで保存',
+      screenshotFailed: 'スクリーンショットに失敗しました',
     },
     vi: {
       title: 'Thu Nhập của Bạn Xếp Hạng Thế Nào Trên Thế Giới?',
@@ -52,6 +58,9 @@ const I18n = (() => {
       disclaimer4: 'PPP dựa trên dữ liệu ICP của World Bank.',
       rankTitle: 'Xếp Hạng Thu Nhập Toàn Cầu',
       pppPrefix: 'PPP',
+      copied: 'Đã sao chép vào clipboard!',
+      imageReady: 'Ảnh đã sẵn sàng! Nhấn giữ để lưu',
+      screenshotFailed: 'Chụp màn hình thất bại',
     },
     hi: {
       title: 'दुनिया भर में आपकी आय का स्तर क्या है?',
@@ -69,6 +78,9 @@ const I18n = (() => {
       disclaimer4: 'PPP विश्व बैंक ICP डेटा पर आधारित है।',
       rankTitle: 'मेरी वैश्विक आय रैंकिंग',
       pppPrefix: 'PPP',
+      copied: 'क्लिपबोर्ड पर कॉपी किया गया!',
+      imageReady: 'इमेज तैयार! सेव करने के लिए लॉन्ग-प्रेस करें',
+      screenshotFailed: 'स्क्रीनशॉट विफल',
     },
     'pt-BR': {
       title: 'Como Sua Renda Se Compara no Mundo?',
@@ -86,6 +98,9 @@ const I18n = (() => {
       disclaimer4: 'PPP baseado nos dados ICP do Banco Mundial.',
       rankTitle: 'Meu Ranking de Renda Global',
       pppPrefix: 'PPP',
+      copied: 'Copiado!',
+      imageReady: 'Imagem pronta! Pressione para salvar',
+      screenshotFailed: 'Captura de tela falhou',
     },
     'zh-CN': {
       title: '你的收入在全球算什么水平？',
@@ -103,6 +118,9 @@ const I18n = (() => {
       disclaimer4: '购买力平价(PPP)基于世界银行ICP数据计算。',
       rankTitle: '我的全球收入排行榜',
       pppPrefix: '购买力平价',
+      copied: '已复制到剪贴板！',
+      imageReady: '图片已生成！长按保存',
+      screenshotFailed: '截图失败',
     },
     ko: {
       title: '당신의 수입은 세계에서 어느 수준일까요?',
@@ -120,6 +138,9 @@ const I18n = (() => {
       disclaimer4: 'PPP는 세계은행 ICP 데이터 기준.',
       rankTitle: '세계 수입 랭킹',
       pppPrefix: 'PPP',
+      copied: '클립보드에 복사되었습니다!',
+      imageReady: '이미지 준비 완료! 길게 눌러 저장',
+      screenshotFailed: '스크린샷 실패',
     },
   };
 

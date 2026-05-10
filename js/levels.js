@@ -11,7 +11,7 @@ const LevelsModule = (() => {
 
   function determineLevel(ratio) {
     for (const level of LEVELS) {
-      if (ratio > level.min && ratio <= level.max) return level;
+      if (ratio >= level.min && ratio <= level.max) return level;
     }
     return LEVELS[LEVELS.length - 1];
   }

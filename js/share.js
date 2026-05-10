@@ -102,7 +102,7 @@ const ShareModule = (() => {
             new ClipboardItem({ 'image/png': blob }),
           ]);
           done = true;
-          showToast('✅', 'Copied to clipboard!');
+          showToast('✅', I18n.t('copied'));
         } catch (_) { /* fall through */ }
       }
 
@@ -128,11 +128,11 @@ const ShareModule = (() => {
           a.click();
         }
         setTimeout(() => URL.revokeObjectURL(url), 600000);
-        showToast('📥', 'Image ready! Long-press to save');
+        showToast('📥', I18n.t('imageReady'));
       }
     } catch (e) {
       console.error('Screenshot failed:', e);
-      showToast('❌', 'Screenshot failed');
+      showToast('❌', I18n.t('screenshotFailed'));
     } finally {
       btn.innerHTML = originalHTML;
       btn.disabled = false;

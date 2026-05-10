@@ -31,6 +31,7 @@
     setText('disc-3', I18n.t('disclaimer3'));
     setText('disc-4', I18n.t('disclaimer4'));
     setText('current-lang', I18n.getLang().toUpperCase().replace('-', '-'));
+    document.title = I18n.t('title');
   }
 
   // --- Language switcher ---

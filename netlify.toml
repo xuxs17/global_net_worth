@@ -26,6 +26,14 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# Security headers for all responses
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "no-referrer-when-downgrade"
+
 # Block non-public paths
 [[redirects]]
   from = "/.git/*"
