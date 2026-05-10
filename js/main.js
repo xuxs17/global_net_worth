@@ -120,25 +120,25 @@
     }
   }
 
+  // World average GNI per capita (~$13,000) — baseline for PPP comparison
+  const WORLD_GNI = 13000;
+
   function buildResults(amountInUSD) {
     const annualIncomeUSD = amountInUSD * 12;
-    const usGni = baseline['US'].gni_per_capita;
     const rates = ExchangeModule.getRates().rates;
     const results = targetCountries.map(code => {
       const country = baseline[code];
       const convertedAmount = ExchangeModule.convertFromUSD(amountInUSD, country.currencyCode);
 
-      // Nominal: income vs local GNI
+      // Nominal: income vs local GNI (am I rich by local standards?)
       const ratio = annualIncomeUSD / country.gni_per_capita;
       const nominalLevel = LevelsModule.determineLevel(ratio);
 
-      // PPP: convert income to international dollars, then compare to US GNI
-      // 1. USD → local currency (market rate)
-      // 2. local currency → international dollars (divide by PPP factor)
-      // 3. ratio vs US GNI (= US PPP income since US factor = 1.0)
+      // PPP: convert to international dollars, compare to world average
+      // (am I rich by global standards, adjusted for cost of living?)
       const localAnnual = annualIncomeUSD * (rates[country.currencyCode] || 1);
       const pppIntlDollars = localAnnual / country.ppp_conversion_factor;
-      const pppRatio = pppIntlDollars / usGni;
+      const pppRatio = pppIntlDollars / WORLD_GNI;
       const pppLevel = LevelsModule.determineLevel(pppRatio);
 
       return {
