@@ -38,7 +38,6 @@ const RenderModule = (() => {
         </div>
         <div class="card-levels">
           <span class="level-tag level-nominal ${item.nominalLevel}">${item.nominalLabel}</span>
-          <span class="level-tag level-ppp ${item.pppLevel}">${I18n.t('pppPrefix')}: ${item.pppLabel}</span>
         </div>
         <div class="card-character">${item.characterEmoji}</div>
       `;

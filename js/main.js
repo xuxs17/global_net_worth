@@ -121,26 +121,13 @@
     }
   }
 
-  // World average GNI per capita (~$13,000) — baseline for PPP comparison
-  const WORLD_GNI = 13000;
-
   function buildResults(amountInUSD) {
     const annualIncomeUSD = amountInUSD * 12;
-    const rates = ExchangeModule.getRates().rates;
     const results = targetCountries.map(code => {
       const country = baseline[code];
       const convertedAmount = ExchangeModule.convertFromUSD(amountInUSD, country.currencyCode);
-
-      // Nominal: income vs local GNI (am I rich by local standards?)
       const ratio = annualIncomeUSD / country.gni_per_capita;
-      const nominalLevel = LevelsModule.determineLevel(ratio);
-
-      // PPP: convert to international dollars, compare to world average
-      // (am I rich by global standards, adjusted for cost of living?)
-      const localAnnual = annualIncomeUSD * (rates[country.currencyCode] || 1);
-      const pppIntlDollars = localAnnual / country.ppp_conversion_factor;
-      const pppRatio = pppIntlDollars / WORLD_GNI;
-      const pppLevel = LevelsModule.determineLevel(pppRatio);
+      const level = LevelsModule.determineLevel(ratio);
 
       return {
         countryCode: code,
@@ -149,11 +136,9 @@
         flagEmoji: RenderModule.countryCodeToFlag(code),
         convertedAmount,
         ratio,
-        nominalLevel: nominalLevel.key,
-        nominalLabel: LevelsModule.getLevelLabel(nominalLevel.key),
-        pppLevel: pppLevel.key,
-        pppLabel: LevelsModule.getLevelLabel(pppLevel.key),
-        characterEmoji: CharactersModule.getEmoji(nominalLevel.key),
+        nominalLevel: level.key,
+        nominalLabel: LevelsModule.getLevelLabel(level.key),
+        characterEmoji: CharactersModule.getEmoji(level.key),
       };
     });
     RenderModule.renderCards(results);

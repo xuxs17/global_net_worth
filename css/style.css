@@ -314,8 +314,6 @@ body {
 }
 .card-levels {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
   align-items: flex-end;
 }
 .level-tag {
