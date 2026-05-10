@@ -126,7 +126,8 @@
     const results = targetCountries.map(code => {
       const country = baseline[code];
       const convertedAmount = ExchangeModule.convertFromUSD(amountInUSD, country.currencyCode);
-      const ratio = annualIncomeUSD / country.gni_per_capita;
+      const avgAnnualSalary = (country.average_monthly_salary || country.gni_per_capita / 12) * 12;
+      const ratio = annualIncomeUSD / avgAnnualSalary;
       const level = LevelsModule.determineLevel(ratio);
 
       return {
