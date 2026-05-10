@@ -258,8 +258,9 @@ const I18n = (() => {
 
   function getLang() { return currentLang; }
 
-  // Initialize — always default to English
-  currentLang = 'en';
+  // Initialize — restore saved language, default to English
+  const saved = localStorage.getItem(LS_KEY);
+  currentLang = (saved && translations[saved]) ? saved : 'en';
   document.documentElement.lang = currentLang;
 
   return { setLang, t, levelLabel, countryName, getDefaultCurrency, getLang, translations, levelLabels };
