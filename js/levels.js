@@ -1,4 +1,6 @@
 const LevelsModule = (() => {
+  // Half-open intervals matching the documented bands: >10, (5,10], (1,5],
+  // (0.5,1], (0.2,0.5], (0.1,0.2], and everything at or below 0.1.
   const LEVELS = [
     { key: 'extremely_rich', min: 10, max: Infinity },
     { key: 'very_rich',     min: 5,  max: 10 },
@@ -11,7 +13,7 @@ const LevelsModule = (() => {
 
   function determineLevel(ratio) {
     for (const level of LEVELS) {
-      if (ratio >= level.min && ratio <= level.max) return level;
+      if (ratio > level.min && ratio <= level.max) return level;
     }
     return LEVELS[LEVELS.length - 1];
   }
