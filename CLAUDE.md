@@ -25,6 +25,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 /
 ├── index.html          # 唯一页面
+├── 404.html            # netlify.toml 的 redirect 目标
+├── og-image.png        # 社交分享预览图，由 scripts/make_og_image.js 生成
 ├── css/
 │   └── style.css       # 样式与动画
 ├── js/
@@ -38,7 +40,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 │   ├── rates.json      # 汇率（每日 Actions 更新），base 为 USD
 │   └── baseline.json   # 各国平均月薪 / GNI（手工维护，无自动更新）
 ├── scripts/
-│   └── update_rates.py # 拉取汇率并写 rates.json（由 .github/workflows 调用）
+│   ├── update_rates.py # 拉取汇率并写 rates.json（由 .github/workflows 调用）
+│   └── make_og_image.js # 重新生成 og-image.png（浏览器控制台运行）
+├── tests/              # node:test 回归测试，见「开发方式」
 └── assets/
     ├── characters/     # 等级角色图片/动画资源（当前为空，用 emoji 占位）
     └── flags/          # 自托管 Twemoji 国旗 SVG，见 assets/flags/CREDITS.md
@@ -77,6 +81,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 开发方式
 
 - 本地用 Live Server 打开 `index.html` 即可开发测试
+- 改完跑 `node --test tests/*.test.mjs`（Node 自带 runner，零 npm 依赖）。测试用 `node:vm` 加载 `js/` 与 `data/` 里的真实文件，不复制逻辑，所以改源码不会有一份「测试专用副本」悄悄漂移
 - 无构建步骤，修改后刷新浏览器
 - 页面加载时解析 `?amount=XXX&from=YYY` URL 参数自动计算
 - 输入变更后通过 `history.replaceState` 更新 URL（debounce 500ms）

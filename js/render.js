@@ -117,5 +117,5 @@ const RenderModule = (() => {
     if (shareActions()) shareActions().style.display = 'none';
   }
 
-  return { renderCards, renderError, renderEmpty };
+  return { formatAmount, renderCards, renderError, renderEmpty };
 })();
