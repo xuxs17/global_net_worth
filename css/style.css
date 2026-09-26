@@ -3,7 +3,7 @@
   --surface: #ffffff;
   --text: #1a1a2e;
   --text-secondary: #6b6560;
-  --text-muted: #9b9590;
+  --text-muted: #757069;
   --accent: #c77826;
   --accent-light: #e8a84c;
   --navy: #1a1a2e;
@@ -19,11 +19,11 @@
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   /* Level colors */
-  --lvl-extremely-rich: #c77826;
+  --lvl-extremely-rich: #8f5200;
   --lvl-extremely-rich-bg: #fdf3e0;
-  --lvl-very-rich: #b87c2c;
+  --lvl-very-rich: #a05c0a;
   --lvl-very-rich-bg: #fef0db;
-  --lvl-middle: #2a7d4f;
+  --lvl-middle: #227345;
   --lvl-middle-bg: #e6f4ec;
   --lvl-average: #2d5f7c;
   --lvl-average-bg: #e8f0f7;
@@ -36,6 +36,15 @@
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 body {
   font-family: var(--font-body);
@@ -427,7 +436,7 @@ a.calc-btn { display: flex; align-items: center; justify-content: center; text-d
 .credit { font-size: 0.7rem; }
 .credit a { color: inherit; }
 .stale-note:empty { display: none; }
-.stale-note { color: #b06a00; font-size: 0.74rem; }
+.stale-note { color: #9a5b00; font-size: 0.74rem; }
 
 /* Animations */
 @keyframes cardIn {

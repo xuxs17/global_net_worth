@@ -49,24 +49,48 @@ const ShareModule = (() => {
     }
   }
 
+  // Loaded on first click instead of as a blocking <script>: this CDN bundle is
+  // only needed for the share image, and a slow or blocked CDN would otherwise
+  // stall every script after it and leave the whole page inert.
+  const H2C_URL = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+  // Pinned version + hash because the library reads the full DOM; the hash was
+  // taken from two independent mirrors of the 1.4.1 release (jsDelivr, hertzen).
+  const H2C_SRI = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
+  let h2cLoading = null;
+
+  function loadHtml2Canvas() {
+    if (window.html2canvas) return Promise.resolve(window.html2canvas);
+    if (!h2cLoading) {
+      h2cLoading = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = H2C_URL;
+        script.integrity = H2C_SRI;
+        script.crossOrigin = 'anonymous';
+        script.async = true;
+        script.onload = () => window.html2canvas
+          ? resolve(window.html2canvas)
+          : reject(new Error('html2canvas failed to initialise'));
+        script.onerror = () => {
+          h2cLoading = null;
+          reject(new Error('html2canvas failed to load'));
+        };
+        document.head.appendChild(script);
+      });
+    }
+    return h2cLoading;
+  }
+
   async function captureImage() {
     const el = document.getElementById('capture-area');
-    if (!el) return;
-    if (!window.html2canvas) {
-      // The CDN copy can be blocked by extensions or regional network policy; a
-      // button that does nothing reads as a broken product instead.
-      showToast('⚠️', I18n.t('captureUnavailable'));
-      return;
-    }
-
     const btn = document.getElementById('share-img-btn');
-    if (!btn) return;
+    if (!el || !btn) return;
+
     const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<span class="share-icon">⏳</span> <span id="share-text">' + I18n.t('capturing') + '</span>';
+    btn.disabled = true;
 
     try {
-      btn.innerHTML = '<span class="share-icon">⏳</span> <span id="share-text">' + I18n.t('capturing') + '</span>';
-      btn.disabled = true;
-
+      const render = await loadHtml2Canvas();
       const cssText = await getCSSText();
 
       // Flag icons are <img>; html2canvas silently drops them while still decoding
@@ -74,7 +98,7 @@ const ShareModule = (() => {
         img.complete ? Promise.resolve() : img.decode().catch(() => {})
       ));
 
-      const canvas = await html2canvas(el, {
+      const canvas = await render(el, {
         backgroundColor: '#ffffff',
         scale: 2,
         useCORS: true,
@@ -149,7 +173,9 @@ const ShareModule = (() => {
       }
     } catch (e) {
       console.error('Screenshot failed:', e);
-      showToast('❌', I18n.t('screenshotFailed'));
+      const loadFailed = e instanceof Error && /html2canvas/.test(e.message);
+      showToast(loadFailed ? '⚠️' : '❌',
+        I18n.t(loadFailed ? 'captureUnavailable' : 'screenshotFailed'));
     } finally {
       btn.innerHTML = originalHTML;
       btn.disabled = false;

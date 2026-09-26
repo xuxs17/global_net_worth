@@ -27,6 +27,7 @@
     setText('hero-subtitle', I18n.t('subtitle'));
     setText('calc-btn', I18n.t('calcBtn'));
     setText('empty-hint', I18n.t('emptyHint'));
+    setText('amount-label', I18n.t('amountPlaceholder'));
     setText('rank-title', I18n.t('rankTitle'));
     setText('share-text', I18n.t('shareBtn'));
     setText('disc-1', I18n.t('disclaimer1'));
@@ -46,13 +47,18 @@
     });
   }
 
+  function setLangMenu(open) {
+    el('lang-dropdown').classList.toggle('open', open);
+    el('lang-toggle').setAttribute('aria-expanded', String(open));
+  }
+
   el('lang-toggle').addEventListener('click', () => {
-    el('lang-dropdown').classList.toggle('open');
+    setLangMenu(!el('lang-dropdown').classList.contains('open'));
   });
 
   document.addEventListener('click', (e) => {
     if (!el('lang-switcher').contains(e.target)) {
-      el('lang-dropdown').classList.remove('open');
+      setLangMenu(false);
     }
   });
 
@@ -68,7 +74,7 @@
         el('currency').value = I18n.getDefaultCurrency(btn.dataset.lang);
       }
       updateCurrencyPlaceholder();
-      el('lang-dropdown').classList.remove('open');
+      setLangMenu(false);
       // Re-render results if any
       if (resultsShowing) calculateMonthly();
     });
@@ -119,10 +125,12 @@
         RenderModule.renderError(I18n.t('amountTooLarge'));
         return;
       }
-      if (!buildResults(amount, fromCurrency, amountInUSD)) {
+      const shown = buildResults(amount, fromCurrency, amountInUSD);
+      if (!shown) {
         resultsShowing = false;
         return;
       }
+      el('results-status').textContent = I18n.t('resultsReady').replace('{n}', shown);
       ShareModule.updateURL(amount, fromCurrency);
       el('share-actions').style.display = 'flex';
       resultsShowing = true;
@@ -168,7 +176,7 @@
     if (results.every(r => r.failed)) {
       // A data outage must not read as "you typed something wrong"
       RenderModule.renderError(I18n.t('dataError'));
-      return false;
+      return 0;
     }
     RenderModule.renderCards(results, {
       salaryText: amount.toLocaleString('en-US', { maximumFractionDigits: 2 }),
@@ -176,7 +184,7 @@
       ratesDate: ExchangeModule.getDate(),
       stale: ExchangeModule.getStale(),
     });
-    return true;
+    return results.filter(r => !r.failed).length;
   }
 
   // --- Event binding ---

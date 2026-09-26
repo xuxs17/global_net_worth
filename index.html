@@ -28,7 +28,7 @@
       <div class="header-top">
         <div class="logo">GlobalSalary<span class="logo-dot">.</span></div>
         <div class="lang-switcher" id="lang-switcher">
-          <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">
+          <button class="lang-toggle" id="lang-toggle" aria-label="Switch language" aria-haspopup="true" aria-expanded="false" aria-controls="lang-dropdown">
             <span class="lang-icon">🌐</span>
             <span id="current-lang">EN</span>
           </button>
@@ -53,6 +53,7 @@
 
       <section class="input-section">
         <div class="input-row">
+          <label class="visually-hidden" for="amount" id="amount-label">Monthly salary</label>
           <input type="number" id="amount" placeholder="Monthly salary" step="any" min="0.01" inputmode="decimal">
           <select id="currency" aria-label="Currency">
             <option value="USD">USD</option>
@@ -88,6 +89,7 @@
               <div class="empty-hint" id="empty-hint">Enter your monthly salary to see your global ranking</div>
             </div>
           </div>
+          <p class="visually-hidden" id="results-status" role="status" aria-live="polite"></p>
           <div class="capture-footer" id="capture-footer">
             <div class="capture-brand">globalsalary.fun</div>
             <div class="capture-fine" id="capture-fine"></div>
@@ -118,7 +120,6 @@
     </main>
   </div>
 
-  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/exchange.js"></script>
   <script src="js/levels.js"></script>

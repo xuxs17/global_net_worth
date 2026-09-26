@@ -5,6 +5,7 @@ const RenderModule = (() => {
   const captureFooter = () => document.getElementById('capture-footer');
   const disclaimerDate = () => document.getElementById('data-date');
   const shareActions = () => document.getElementById('share-actions');
+  const status = () => document.getElementById('results-status');
 
   // Self-hosted SVG flags: emoji flags degrade to bare letters on Windows and are
   // font-dependent once the result is flattened into a share image.
@@ -99,6 +100,7 @@ const RenderModule = (() => {
   function renderError(msg) {
     if (!container()) return;
     container().innerHTML = `<div class="error-message">${msg}</div>`;
+    if (status()) status().textContent = '';
     setCaptureChrome(false);
     if (shareActions()) shareActions().style.display = 'none';
   }
@@ -110,6 +112,7 @@ const RenderModule = (() => {
         <div class="empty-icon">🌍</div>
         <div class="empty-hint" id="empty-hint">${I18n.t('emptyHint')}</div>
       </div>`;
+    if (status()) status().textContent = '';
     setCaptureChrome(false);
     if (shareActions()) shareActions().style.display = 'none';
   }
