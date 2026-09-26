@@ -29,5 +29,14 @@ const ExchangeModule = (() => {
     return getRates().date;
   }
 
-  return { load, getRates, convertToUSD, convertFromUSD, getDate };
+  // Which upstream produced each rate, and which ones are carried-over old values
+  function getSources() {
+    return getRates().sources || {};
+  }
+
+  function getStale() {
+    return getRates().stale || {};
+  }
+
+  return { load, getRates, convertToUSD, convertFromUSD, getDate, getSources, getStale };
 })();

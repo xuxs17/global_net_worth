@@ -7,10 +7,22 @@
     "EUR": 0.87696,
     "GBP": 0.75458,
     "JPY": 157.59,
-    "RUB": 92.3,
+    "RUB": 84.2771,
     "INR": 95.82,
-    "VND": 25450,
+    "VND": 25965.7,
     "IDR": 17914,
     "BRL": 5.1821
+  },
+  "sources": {
+    "USD": "reference",
+    "CNY": "ecb",
+    "EUR": "ecb",
+    "GBP": "ecb",
+    "JPY": "ecb",
+    "RUB": "er-api",
+    "INR": "ecb",
+    "VND": "er-api",
+    "IDR": "ecb",
+    "BRL": "ecb"
   }
 }

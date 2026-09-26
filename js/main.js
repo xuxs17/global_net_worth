@@ -1,4 +1,7 @@
 (() => {
+  // Above this, converted amounts run to hundreds of digits and blow out the cards
+  const MAX_MONTHLY_USD = 1e8;
+
   let baseline = null;
   let targetCountries = [];
   let ready = false;
@@ -28,9 +31,8 @@
     setText('share-text', I18n.t('shareBtn'));
     setText('disc-1', I18n.t('disclaimer1'));
     setText('disc-2', I18n.t('disclaimer2'));
-    setText('disc-3', I18n.t('disclaimer3'));
-    setText('disc-4', I18n.t('disclaimer4'));
-    setText('current-lang', I18n.getLang().toUpperCase().replace('-', '-'));
+    setText('disc-3', I18n.t('ratesSource'));
+    setText('disc-4', I18n.t('salaryBasis'));
     document.title = I18n.t('title');
   }
 
@@ -59,14 +61,15 @@
       I18n.setLang(btn.dataset.lang);
       updateLangDisplay();
       updateUIText();
-      el('currency').value = I18n.getDefaultCurrency(btn.dataset.lang);
+      // Only steer the currency for a visitor who has not engaged yet — switching
+      // language must never reinterpret an amount the user already entered.
+      if (!resultsShowing && !el('amount').value) {
+        el('currency').value = I18n.getDefaultCurrency(btn.dataset.lang);
+      }
       updateCurrencyPlaceholder();
       el('lang-dropdown').classList.remove('open');
       // Re-render results if any
-      if (resultsShowing) {
-        const amount = parseFloat(el('amount').value);
-        if (amount > 0) calculateMonthly();
-      }
+      if (resultsShowing) calculateMonthly();
     });
   });
 
@@ -78,7 +81,7 @@
       const resp = await fetch('data/baseline.json');
       if (!resp.ok) throw new Error('Failed to load baseline');
       baseline = await resp.json();
-      targetCountries = Object.keys(baseline);
+      targetCountries = Object.keys(baseline).filter(code => !code.startsWith('_'));
       ready = true;
 
       const saved = ShareModule.readURLParams();
@@ -110,7 +113,15 @@
 
     try {
       const amountInUSD = ExchangeModule.convertToUSD(amount, fromCurrency);
-      buildResults(amountInUSD);
+      if (!Number.isFinite(amountInUSD) || amountInUSD > MAX_MONTHLY_USD) {
+        resultsShowing = false;
+        RenderModule.renderError(I18n.t('amountTooLarge'));
+        return;
+      }
+      if (!buildResults(amount, fromCurrency, amountInUSD)) {
+        resultsShowing = false;
+        return;
+      }
       ShareModule.updateURL(amount, fromCurrency);
       el('share-actions').style.display = 'flex';
       resultsShowing = true;
@@ -121,28 +132,50 @@
     }
   }
 
-  function buildResults(amountInUSD) {
+  function buildResults(amount, fromCurrency, amountInUSD) {
     const annualIncomeUSD = amountInUSD * 12;
+    // One country's missing rate or baseline must not blank the whole ranking
     const results = targetCountries.map(code => {
-      const country = baseline[code];
-      const convertedAmount = ExchangeModule.convertFromUSD(amountInUSD, country.currencyCode);
-      const avgAnnualSalary = (country.average_monthly_salary || country.gni_per_capita / 12) * 12;
-      const ratio = annualIncomeUSD / avgAnnualSalary;
-      const level = LevelsModule.determineLevel(ratio);
+      const country = baseline[code] || {};
+      try {
+        const convertedAmount = ExchangeModule.convertFromUSD(amountInUSD, country.currencyCode);
+        const avgAnnualSalary = (country.average_monthly_salary || country.gni_per_capita / 12) * 12;
+        if (!avgAnnualSalary) throw new Error(`no salary baseline for ${code}`);
+        const ratio = annualIncomeUSD / avgAnnualSalary;
+        const level = LevelsModule.determineLevel(ratio);
 
-      return {
-        countryCode: code,
-        countryName: I18n.countryName(code),
-        currencyCode: country.currencyCode,
-        flagEmoji: RenderModule.countryCodeToFlag(code),
-        convertedAmount,
-        ratio,
-        nominalLevel: level.key,
-        nominalLabel: LevelsModule.getLevelLabel(level.key),
-        characterEmoji: CharactersModule.getEmoji(level.key),
-      };
+        return {
+          countryCode: code,
+          countryName: I18n.countryName(code),
+          currencyCode: country.currencyCode,
+          convertedAmount,
+          ratio,
+          nominalLevel: level.key,
+          nominalLabel: LevelsModule.getLevelLabel(level.key),
+          characterEmoji: CharactersModule.getEmoji(level.key),
+        };
+      } catch (e) {
+        console.warn(`Unusable data for ${code}:`, e);
+        return {
+          countryCode: code,
+          countryName: I18n.countryName(code),
+          currencyCode: country.currencyCode || code,
+          failed: true,
+        };
+      }
     });
-    RenderModule.renderCards(results);
+    if (results.every(r => r.failed)) {
+      // A data outage must not read as "you typed something wrong"
+      RenderModule.renderError(I18n.t('dataError'));
+      return false;
+    }
+    RenderModule.renderCards(results, {
+      salaryText: amount.toLocaleString('en-US', { maximumFractionDigits: 2 }),
+      currencyCode: fromCurrency,
+      ratesDate: ExchangeModule.getDate(),
+      stale: ExchangeModule.getStale(),
+    });
+    return true;
   }
 
   // --- Event binding ---

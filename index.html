@@ -53,16 +53,16 @@
         <div class="input-row">
           <input type="number" id="amount" placeholder="Monthly salary" step="any" min="0.01" inputmode="decimal">
           <select id="currency" aria-label="Currency">
-            <option value="USD">🇺🇸 USD</option>
-            <option value="EUR">🇪🇺 EUR</option>
-            <option value="GBP">🇬🇧 GBP</option>
-            <option value="JPY">🇯🇵 JPY</option>
-            <option value="CNY">🇨🇳 CNY</option>
-            <option value="INR">🇮🇳 INR</option>
-            <option value="BRL">🇧🇷 BRL</option>
-            <option value="VND">🇻🇳 VND</option>
-            <option value="IDR">🇮🇩 IDR</option>
-            <option value="RUB">🇷🇺 RUB</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="JPY">JPY</option>
+            <option value="CNY">CNY</option>
+            <option value="INR">INR</option>
+            <option value="BRL">BRL</option>
+            <option value="VND">VND</option>
+            <option value="IDR">IDR</option>
+            <option value="RUB">RUB</option>
           </select>
         </div>
         <button class="calc-btn" id="calc-btn">Calculate Global Ranking</button>
@@ -79,11 +79,17 @@
       <section class="results-section">
         <div id="capture-area">
           <div class="capture-title" id="rank-title">My Global Income Ranking</div>
+          <div class="capture-meta" id="capture-meta"></div>
           <div id="results-container">
             <div class="empty-state">
               <div class="empty-icon">🌍</div>
               <div class="empty-hint" id="empty-hint">Enter your monthly salary to see your global ranking</div>
             </div>
+          </div>
+          <div class="capture-footer" id="capture-footer">
+            <div class="capture-brand">globalsalary.fun</div>
+            <div class="capture-fine" id="capture-fine"></div>
+            <div class="capture-date"><span id="capture-date-label"></span> <span id="capture-date-value">--</span></div>
           </div>
         </div>
         <div class="share-actions" id="share-actions" style="display:none">
@@ -102,8 +108,10 @@
 
       <footer class="disclaimer">
         <p id="disc-1">This tool is for entertainment only. Not financial advice.</p>
-        <p><span id="disc-2">Exchange rate date:</span> <span id="data-date">--</span> · <span id="disc-3">Data sources: Frankfurter API / World Bank / IMF</span></p>
-        <p id="disc-4">PPP based on World Bank ICP data.</p>
+        <p><span id="disc-2">Exchange rate date:</span> <span id="data-date">--</span> · <span id="disc-3">Exchange rates: ECB via Frankfurter, supplemented by open.er-api.com</span></p>
+        <p class="stale-note" id="stale-note"></p>
+        <p id="disc-4">Comparison basis: average monthly salary per country (CEOWORLD 2025)</p>
+        <p class="credit">Flag icons from <a href="https://github.com/twitter/twemoji" rel="license noopener">Twemoji</a> (CC-BY 4.0)</p>
       </footer>
     </main>
   </div>

@@ -269,6 +269,39 @@ body {
   letter-spacing: -0.01em;
 }
 
+.capture-meta {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: -6px 0 14px;
+  display: none;
+}
+.capture-footer {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  display: none;
+}
+.capture-brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.capture-fine {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+.capture-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
 /* Result cards */
 .result-card {
   display: flex;
@@ -296,7 +329,14 @@ body {
   min-width: 30px;
   text-align: center;
 }
-.card-flag { font-size: 1.7rem; line-height: 1; }
+.card-flag {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: block;
+  border-radius: 7px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14);
+}
 .card-info { flex: 1; min-width: 0; }
 .card-currency { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; letter-spacing: 0.03em; }
 .card-amount {
@@ -339,6 +379,7 @@ body {
 .low           { background: var(--lvl-low-bg); color: var(--lvl-low); }
 .very_low      { background: var(--lvl-very-low-bg); color: var(--lvl-very-low); }
 .extremely_low { background: var(--lvl-extremely-low-bg); color: var(--lvl-extremely-low); }
+.level-unavailable { background: #f1f1f3; color: var(--text-muted); font-weight: 500; }
 
 /* Share actions */
 .share-actions { display: flex; justify-content: center; margin-top: 18px; }
@@ -383,6 +424,10 @@ body {
   color: var(--text-muted);
   line-height: 1.8;
 }
+.credit { font-size: 0.7rem; }
+.credit a { color: inherit; }
+.stale-note:empty { display: none; }
+.stale-note { color: #b06a00; font-size: 0.74rem; }
 
 /* Animations */
 @keyframes cardIn {
@@ -425,7 +470,7 @@ body {
   .calc-btn { height: 48px; font-size: 1rem; }
   .result-card { padding: 12px 14px; gap: 10px; }
   .card-amount { font-size: 1rem; }
-  .card-flag { font-size: 1.4rem; }
+  .card-flag { width: 25px; height: 25px; flex-basis: 25px; }
   .card-character { font-size: 1.4rem; min-width: 30px; }
   .level-tag { font-size: 0.68rem; padding: 3px 10px; }
   .ad-placeholder { max-width: 320px; height: 50px; }

@@ -45,7 +45,13 @@ const ShareModule = (() => {
 
   async function captureImage() {
     const el = document.getElementById('capture-area');
-    if (!el || !window.html2canvas) return;
+    if (!el) return;
+    if (!window.html2canvas) {
+      // The CDN copy can be blocked by extensions or regional network policy; a
+      // button that does nothing reads as a broken product instead.
+      showToast('⚠️', I18n.t('captureUnavailable'));
+      return;
+    }
 
     const btn = document.getElementById('share-img-btn');
     if (!btn) return;
@@ -56,6 +62,11 @@ const ShareModule = (() => {
       btn.disabled = true;
 
       const cssText = await getCSSText();
+
+      // Flag icons are <img>; html2canvas silently drops them while still decoding
+      await Promise.all([...el.querySelectorAll('img')].map(img =>
+        img.complete ? Promise.resolve() : img.decode().catch(() => {})
+      ));
 
       const canvas = await html2canvas(el, {
         backgroundColor: '#ffffff',
