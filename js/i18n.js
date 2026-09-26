@@ -320,8 +320,13 @@ const I18n = (() => {
 
   let currentLang = 'en';
 
+  // Only keys we actually ship, never inherited Object members
+  function isLang(value) {
+    return typeof value === 'string' && Object.prototype.hasOwnProperty.call(translations, value);
+  }
+
   function setLang(lang) {
-    if (!translations[lang]) return;
+    if (!isLang(lang)) return;
     currentLang = lang;
     localStorage.setItem(LS_KEY, lang);
     document.documentElement.lang = lang;
@@ -340,14 +345,34 @@ const I18n = (() => {
   }
 
   function getDefaultCurrency(lang) {
-    return langCurrency[lang] || 'USD';
+    return Object.prototype.hasOwnProperty.call(langCurrency, lang) ? langCurrency[lang] : 'USD';
   }
 
   function getLang() { return currentLang; }
 
-  // Initialize — restore saved language, default to English
+  // A shared link carries ?lang= so the recipient sees the sender's language;
+  // otherwise honour what the visitor's browser already asks for.
+  function fromURL() {
+    const param = new URLSearchParams(window.location.search).get('lang');
+    return isLang(param) ? param : null;
+  }
+
+  function fromBrowser() {
+    const wanted = (navigator.languages && navigator.languages.length)
+      ? navigator.languages
+      : [navigator.language || ''];
+    for (const tag of wanted) {
+      if (!tag) continue;
+      if (isLang(tag)) return tag;
+      const prefix = tag.split('-')[0].toLowerCase();
+      const match = Object.keys(translations).find(k => k.split('-')[0].toLowerCase() === prefix);
+      if (match) return match;
+    }
+    return null;
+  }
+
   const saved = localStorage.getItem(LS_KEY);
-  currentLang = (saved && translations[saved]) ? saved : 'en';
+  currentLang = fromURL() || (isLang(saved) ? saved : null) || fromBrowser() || 'en';
   document.documentElement.lang = currentLang;
 
   return { setLang, t, levelLabel, countryName, getDefaultCurrency, getLang, translations, levelLabels };

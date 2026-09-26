@@ -6,6 +6,12 @@ const ShareModule = (() => {
     window.history.replaceState({}, '', url);
   }
 
+  function updateLangParam(lang) {
+    const url = new URL(window.location);
+    url.searchParams.set('lang', lang);
+    window.history.replaceState({}, '', url);
+  }
+
   function readURLParams() {
     const params = new URLSearchParams(window.location.search);
     const amount = parseFloat(params.get('amount'));
@@ -150,5 +156,5 @@ const ShareModule = (() => {
     }
   }
 
-  return { updateURL, readURLParams, captureImage };
+  return { updateURL, updateLangParam, readURLParams, captureImage };
 })();

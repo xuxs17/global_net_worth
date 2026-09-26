@@ -59,6 +59,7 @@
   document.querySelectorAll('.lang-option').forEach(btn => {
     btn.addEventListener('click', () => {
       I18n.setLang(btn.dataset.lang);
+      ShareModule.updateLangParam(btn.dataset.lang);
       updateLangDisplay();
       updateUIText();
       // Only steer the currency for a visitor who has not engaged yet — switching
