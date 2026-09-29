@@ -35,22 +35,40 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
 
 # Block non-public paths
+# Block non-public paths. force = true is required: without it Netlify serves any
+# real file that matches the pattern and the rule silently does nothing.
 [[redirects]]
   from = "/.git/*"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/scripts/*"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/.github/*"
   to = "/404.html"
   status = 404
+  force = true
 
 [[redirects]]
   from = "/*.md"
   to = "/404.html"
   status = 404
+  force = true
+
+[[redirects]]
+  from = "/tests/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true

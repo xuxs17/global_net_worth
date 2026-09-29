@@ -50,6 +50,28 @@ test('baseline metadata records where the numbers came from', () => {
   }
 });
 
+test('public URLs all agree on one host', () => {
+  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const robots = fs.readFileSync(path.join(ROOT, 'robots.txt'), 'utf8');
+  const sitemap = fs.readFileSync(path.join(ROOT, 'sitemap.xml'), 'utf8');
+  const brand = html.match(/<div class="capture-brand">([^<]+)<\/div>/);
+
+  const urls = [
+    ...[...html.matchAll(/content="(https?:\/\/[^"]+)"/g)].map(m => m[1]),
+    ...[...robots.matchAll(/Sitemap: (https?:\/\/\S+)/g)].map(m => m[1]),
+    ...[...sitemap.matchAll(/<loc>(https?:\/\/[^<]+)<\/loc>/g)].map(m => m[1]),
+  ];
+  assert.ok(urls.length >= 4, `expected several absolute URLs, found ${urls.length}`);
+
+  const hosts = new Set(urls.map(u => new URL(u).host));
+  // A dead host in the share-image watermark breaks the whole referral loop,
+  // so the brand line has to name the same host the metadata uses.
+  assert.ok(brand, 'share-image brand line is missing');
+  hosts.add(brand[1]);
+
+  assert.equal(hosts.size, 1, `URLs disagree on host: ${[...hosts].join(', ')}`);
+});
+
 test('flag assets exist for every country and keep intrinsic size', () => {
   for (const code of countries) {
     const file = path.join(ROOT, 'assets', 'flags', `${code.toLowerCase()}.svg`);

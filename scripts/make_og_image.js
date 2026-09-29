@@ -64,7 +64,7 @@
 
   ctx.font = '700 32px "Playfair Display", Georgia, serif';
   ctx.fillStyle = ACCENT;
-  ctx.fillText('globalsalary.fun', 72, 548);
+  ctx.fillText('global-salary-fun.netlify.app', 72, 548);
   ctx.font = '400 17px Inter, sans-serif';
   ctx.fillStyle = MUTED;
   ctx.fillText('For entertainment only - not financial advice', 72, 578);

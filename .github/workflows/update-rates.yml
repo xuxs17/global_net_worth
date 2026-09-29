@@ -29,7 +29,11 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to rates."
           else
-            git commit -m "chore: update exchange rates [skip ci]"
+            # Do NOT add "[skip ci]" here. Netlify's GitHub integration honours it,
+            # which silently stopped every rate update from reaching production for
+            # four months. This workflow only runs on schedule/manual dispatch, so
+            # pushing cannot loop back into it.
+            git commit -m "chore: update exchange rates"
             git push
             echo "Rates updated and pushed."
           fi

@@ -78,6 +78,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | very_low | 手头有点紧 | (0.1, 0.2] |
 | extremely_low | 需要精打细算 | ≤ 0.1 |
 
+## 域名与发布
+
+线上站点是 `https://global-salary-fun.netlify.app`；自定义域名 `globalsalary.fun` **从未在 Netlify 绑定**（`getSite` 的 `domain_aliases` 为空），所以 `og:url`、`sitemap.xml`、`robots.txt`、分享图水印一律先写可解析的 netlify.app 主机名，不要让分享图指向打不开的域名。
+
+将来绑定自定义域名时，这四处要一起改回（`grep -rn globalsalary.fun .` 应能一次列全）：`index.html` 的 `og:url` / `og:image` / `twitter:image` / `.capture-brand`、`robots.txt` 的 Sitemap 行、`sitemap.xml` 的 `<loc>`、`scripts/make_og_image.js` 的品牌字，改完必须重跑该脚本重新生成 `og-image.png`。
+
+发布链路：仓库已通过 Netlify 的 GitHub 集成关联（`deploy_hook`），push 即部署。因此 **GitHub Actions 的提交信息里不要写 `[skip ci]`** —— Netlify 同样尊重该标记，那会让每晚的汇率提交永远不上线（2026-05-10 至 2026-09-26 就是这样静默断了四个半月）。该 workflow 只有 `schedule` 与 `workflow_dispatch` 触发器，push 不会让它自循环。
+
 ## 开发方式
 
 - 本地用 Live Server 打开 `index.html` 即可开发测试

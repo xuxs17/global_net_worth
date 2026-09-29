@@ -12,6 +12,7 @@ import json
 import math
 import sys
 import urllib.request
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 TARGETS = ["CNY", "EUR", "GBP", "JPY", "RUB", "INR", "VND", "IDR", "BRL"]
@@ -43,9 +44,13 @@ def fetch_er_api() -> tuple[dict, str]:
     data = get_json("https://open.er-api.com/v6/latest/USD")
     if data.get("result") != "success":
         raise RuntimeError(f"er-api result={data.get('result')}")
-    stamp = (data.get("time_last_update_utc") or "")[:16]
+    stamp = data.get("time_last_update_utc") or ""
+    try:
+        date = parsedate_to_datetime(stamp).date().isoformat()
+    except (TypeError, ValueError):
+        date = ""
     rates = {k: v for k, v in (data.get("rates") or {}).items() if k in TARGETS}
-    return rates, stamp
+    return rates, date
 
 
 def sig6(value: float) -> float:
@@ -54,12 +59,15 @@ def sig6(value: float) -> float:
     return int(rounded) if rounded.is_integer() else rounded
 
 
-def build_rates(ecb: dict, er: dict, existing: dict, ecb_date: str) -> dict:
+def build_rates(ecb: dict, er: dict, existing: dict, ecb_date: str, er_date: str) -> dict:
     rates: dict = {"USD": 1.0}
     sources: dict = {"USD": "reference"}
     stale: dict = {}
     previous = existing.get("rates", {})
     previous_stale = existing.get("stale", {})
+    # er-api refreshes on its own clock and can land a day ahead of the ECB
+    # reference date; only a strictly older value deserves the "not current" label.
+    er_lags = bool(er_date and ecb_date and er_date < ecb_date)
 
     for currency in TARGETS:
         if currency in ecb:
@@ -68,6 +76,8 @@ def build_rates(ecb: dict, er: dict, existing: dict, ecb_date: str) -> dict:
         elif currency in er:
             rates[currency] = sig6(er[currency])
             sources[currency] = "er-api"
+            if er_lags:
+                stale[currency] = er_date
         elif currency in previous:
             rates[currency] = previous[currency]
             sources[currency] = "cached"
@@ -99,12 +109,12 @@ def main() -> None:
     try:
         existing = load_existing()
         ecb, ecb_date = fetch_ecb()
+        er, er_date = {}, ""
         try:
-            er, _ = fetch_er_api()
+            er, er_date = fetch_er_api()
         except Exception as e:
             print(f"WARNING: er-api unavailable ({e}); ECB-only", file=sys.stderr)
-            er = {}
-        payload = build_rates(ecb, er, existing, ecb_date)
+        payload = build_rates(ecb, er, existing, ecb_date, er_date)
         validate(payload)
         RATES_FILE.write_text(
             json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
