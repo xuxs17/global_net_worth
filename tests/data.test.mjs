@@ -72,6 +72,25 @@ test('public URLs all agree on one host', () => {
   assert.equal(hosts.size, 1, `URLs disagree on host: ${[...hosts].join(', ')}`);
 });
 
+test('every markdown file in the repo is blocked from the public site', () => {
+  // Netlify only accepts `*` as a whole path segment, so `/*.md` cannot work and
+  // each document needs its own rule. This test is what keeps that convention
+  // from rotting when someone adds a new doc.
+  const toml = fs.readFileSync(path.join(ROOT, 'netlify.toml'), 'utf8');
+  const blocked = new Set(
+    [...toml.matchAll(/from = "([^"]+)"/g)].map(m => decodeURIComponent(m[1]))
+  );
+  const docs = [...fs.readdirSync(ROOT, { recursive: true })]
+    .map(p => String(p))
+    .filter(p => p.endsWith('.md') && !p.startsWith('.git') && !p.startsWith('node_modules'));
+
+  assert.ok(docs.length >= 4, `expected the project docs to be found, got ${docs.length}`);
+  for (const doc of docs) {
+    assert.ok(blocked.has('/' + doc.split(path.sep).join('/')),
+      `${doc} would be publicly served - add a [[redirects]] rule with force = true`);
+  }
+});
+
 test('flag assets exist for every country and keep intrinsic size', () => {
   for (const code of countries) {
     const file = path.join(ROOT, 'assets', 'flags', `${code.toLowerCase()}.svg`);

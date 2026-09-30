@@ -34,9 +34,10 @@
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
 
-# Block non-public paths
-# Block non-public paths. force = true is required: without it Netlify serves any
-# real file that matches the pattern and the rule silently does nothing.
+# Block non-public paths that could still be uploaded. force = true is required:
+# without it Netlify serves any real file that matches the pattern and the rule
+# silently does nothing. Markdown is NOT covered by a pattern here because Netlify
+# rejects `/*.md` (its `*` must be a whole segment) - each doc is listed below.
 [[redirects]]
   from = "/.git/*"
   to = "/404.html"
@@ -56,19 +57,41 @@
   force = true
 
 [[redirects]]
-  from = "/*.md"
-  to = "/404.html"
-  status = 404
-  force = true
-
-[[redirects]]
   from = "/tests/*"
   to = "/404.html"
   status = 404
   force = true
 
+# Markdown has to be listed file by file: Netlify's `from` patterns only accept
+# `*` as a whole path segment, so `/*.md` is rejected and matches nothing.
+# Adding a new document at the repo root means adding a rule here. Non-ASCII paths
+# must be percent-encoded - Netlify rejects the literal characters.
 [[redirects]]
-  from = "/.netlify/*"
+  from = "/CLAUDE.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/%E9%9C%80%E6%B1%82%E6%96%87%E6%A1%A3.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/%E5%8A%9F%E8%83%BD%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/%E6%B5%8B%E8%AF%95%E6%96%87%E6%A1%A3.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/assets/flags/CREDITS.md"
   to = "/404.html"
   status = 404
   force = true
