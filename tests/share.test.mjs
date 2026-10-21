@@ -57,10 +57,48 @@ test('a failed native share cannot fall back to downloading a report invalidated
   context.document.body = { appendChild() {} };
   context.document.createElement = () => ({ click() {}, remove() {} });
   context.navigator.canShare = () => true;
+  context.navigator.maxTouchPoints = 1;
+  context.window.matchMedia = () => ({ matches: true });
   context.navigator.share = () => new Promise((_resolve, reject) => { rejectNative = reject; });
   const saving = ShareModule.saveImage(new Blob(['PNG'], { type: 'image/png' }), () => current);
   current = false;
   rejectNative(new Error('Native sharing unavailable'));
   assert.equal(await saving, 'stale');
+  assert.equal(downloads, 0);
+});
+
+test('desktop saving downloads directly even when the browser advertises native sharing', async () => {
+  const { ShareModule, context } = load('?lang=en');
+  let downloads = 0;
+  let nativeCalls = 0;
+  context.File = File;
+  context.setTimeout = () => {};
+  context.URL = class extends URL {
+    static createObjectURL() { downloads++; return 'blob:test'; }
+  };
+  context.document.body = { appendChild() {} };
+  context.document.createElement = () => ({ click() {}, remove() {} });
+  context.navigator.maxTouchPoints = 0;
+  context.window.matchMedia = () => ({ matches: false });
+  context.navigator.canShare = () => true;
+  context.navigator.share = () => { nativeCalls++; return new Promise(() => {}); };
+  const saving = ShareModule.saveImage(new Blob(['PNG'], { type: 'image/png' }));
+  assert.equal(nativeCalls, 0, 'A desktop native-share dialog can leave saving pending');
+  assert.equal(downloads, 1);
+  assert.equal(await saving, true);
+});
+
+test('cancelling native sharing on a touch device does not start a download', async () => {
+  const { ShareModule, context } = load('?lang=en');
+  let downloads = 0;
+  context.File = File;
+  context.URL = class extends URL {
+    static createObjectURL() { downloads++; return 'blob:test'; }
+  };
+  context.navigator.maxTouchPoints = 1;
+  context.window.matchMedia = () => ({ matches: true });
+  context.navigator.canShare = () => true;
+  context.navigator.share = async () => { const error = new Error('Cancelled'); error.name = 'AbortError'; throw error; };
+  assert.equal(await ShareModule.saveImage(new Blob(['PNG'], { type: 'image/png' })), false);
   assert.equal(downloads, 0);
 });

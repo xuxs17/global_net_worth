@@ -175,7 +175,8 @@ const ShareModule = (() => {
   async function saveImage(blob, isCurrent = () => true) {
     if (!isCurrent()) return 'stale';
     const file = new File([blob], 'global-salary-passport.png', { type: 'image/png' });
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    const touchDevice = navigator.maxTouchPoints > 0 && window.matchMedia('(pointer:coarse)').matches;
+    if (touchDevice && navigator.share && navigator.canShare?.({ files: [file] })) {
       try {
         await navigator.share({ files: [file] });
         return true;

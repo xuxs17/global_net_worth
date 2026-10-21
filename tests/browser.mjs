@@ -128,11 +128,17 @@ try {
   await page.evaluate(() => {
     const share = Object.getOwnPropertyDescriptor(navigator, 'share');
     const canShare = Object.getOwnPropertyDescriptor(navigator, 'canShare');
+    const touch = Object.getOwnPropertyDescriptor(navigator, 'maxTouchPoints');
+    const matchMedia = window.matchMedia;
     window.__restoreNative = () => {
       if (share) Object.defineProperty(navigator, 'share', share); else delete navigator.share;
       if (canShare) Object.defineProperty(navigator, 'canShare', canShare); else delete navigator.canShare;
+      if (touch) Object.defineProperty(navigator, 'maxTouchPoints', touch); else delete navigator.maxTouchPoints;
+      window.matchMedia = matchMedia;
     };
     Object.defineProperty(navigator, 'canShare', { configurable: true, value: () => true });
+    Object.defineProperty(navigator, 'maxTouchPoints', { configurable: true, value: 1 });
+    window.matchMedia = query => query === '(pointer:coarse)' ? { matches: true } : matchMedia.call(window, query);
     Object.defineProperty(navigator, 'share', { configurable: true, value: () => new Promise((_resolve, reject) => {
       window.__rejectNative = () => reject(new DOMException('Native sharing unavailable', 'NotAllowedError'));
     }) });
