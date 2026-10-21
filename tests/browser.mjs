@@ -48,10 +48,10 @@ try {
   const before = await ratio();
   await page.locator('#currency').selectOption('CNY');
   assert.notEqual(await ratio(), before);
-  assert.equal(new URL(page.url()).searchParams.get('from'), 'CNY');
+  assert.equal(new URL(page.url()).searchParams.has('from'), false);
   await page.locator('#double-btn').click();
   assert.equal(await page.locator('#amount').inputValue(), '6000');
-  assert.equal(new URL(page.url()).searchParams.get('amount'), '6000');
+  assert.equal(new URL(page.url()).searchParams.has('amount'), false);
   await page.locator('#half-btn').click();
   assert.equal(await page.locator('#amount').inputValue(), '3000');
   checks.push('preset, amount, currency, double and half stay synchronized');

@@ -1,8 +1,9 @@
 const ShareModule = (() => {
   function updateURL(amount, fromCurrency, lang = I18n.getLang()) {
     const url = new URL(window.location);
-    url.searchParams.set('amount', String(amount));
-    url.searchParams.set('from', fromCurrency);
+    // Input belongs in memory. Only an explicit share action builds a salary URL.
+    url.searchParams.delete('amount');
+    url.searchParams.delete('from');
     url.searchParams.set('lang', lang);
     window.history.replaceState({}, '', url);
   }
@@ -21,17 +22,25 @@ const ShareModule = (() => {
   }
 
   function readURLParams(rates) {
-    const params = new URLSearchParams(window.location.search);
+    const params = VisitModule.sharedInput();
     try {
-      const input = CalculatorModule.readInput({ amount: params.get('amount'), fromCurrency: params.get('from') }, rates);
+      const input = CalculatorModule.readInput({ amount: params.amount, fromCurrency: params.from }, rates);
       return { amount: input.amount, fromCurrency: input.fromCurrency };
     } catch (_) {
       return null;
     }
   }
 
-  async function copyLink() {
-    const value = window.location.href;
+  function buildLink(report) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('amount', String(report.amount));
+    url.searchParams.set('from', report.fromCurrency);
+    url.searchParams.set('lang', I18n.getLang());
+    return url.href;
+  }
+
+  async function copyLink(report) {
+    const value = buildLink(report);
     try {
       await navigator.clipboard.writeText(value);
       return true;
@@ -197,5 +206,5 @@ const ShareModule = (() => {
     return true;
   }
 
-  return { updateURL, updateLangParam, clearURL, readURLParams, copyLink, createImage, saveImage };
+  return { updateURL, updateLangParam, clearURL, readURLParams, buildLink, copyLink, createImage, saveImage };
 })();

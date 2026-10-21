@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { loadModules, readData } from './helpers/sandbox.mjs';
 
 const rates = readData('rates.json');
-const load = search => loadModules(['i18n', 'levels', 'calculator', 'share'], { search });
+const load = search => loadModules(['visit', 'i18n', 'levels', 'calculator', 'share'], { search });
 
 test('restores complete, supported salary links', () => {
   const { ShareModule } = load('?amount=10000&from=CNY&lang=zh-CN');
@@ -22,15 +22,38 @@ test('ignores partial numbers, excessive salaries, unsupported currencies and in
   }
 });
 
-test('salary URL updates carry language and preserve unrelated parameters and hash', () => {
-  const { ShareModule, context } = load('?utm_source=friend#results');
+test('salary updates keep only language in the address and explicit share links carry the input', () => {
+  const { ShareModule, I18n, context } = load('?utm_source=friend#results');
+  I18n.setLang('zh-CN');
   ShareModule.updateURL(10000, 'CNY', 'zh-CN');
   const url = context.window.location;
-  assert.equal(url.searchParams.get('amount'), '10000');
-  assert.equal(url.searchParams.get('from'), 'CNY');
+  assert.equal(url.searchParams.has('amount'), false);
+  assert.equal(url.searchParams.has('from'), false);
   assert.equal(url.searchParams.get('lang'), 'zh-CN');
   assert.equal(url.searchParams.get('utm_source'), 'friend');
   assert.equal(url.hash, '#results');
+  const shared = new URL(ShareModule.buildLink({ amount: 10000, fromCurrency: 'CNY' }));
+  assert.equal(shared.searchParams.get('amount'), '10000');
+  assert.equal(shared.searchParams.get('from'), 'CNY');
+  assert.equal(shared.searchParams.get('lang'), 'zh-CN');
+  assert.equal(context.window.location.searchParams.has('amount'), false);
+});
+
+test('a legacy incoming salary is removed before later scripts but still restores correctly', () => {
+  const { ShareModule, context } = load('?amount=58000&from=CNY&lang=zh-CN');
+  assert.equal(context.window.location.searchParams.has('amount'), false);
+  assert.equal(context.window.location.searchParams.has('from'), false);
+  assert.equal(context.window.location.searchParams.get('lang'), 'zh-CN');
+  assert.equal(ShareModule.readURLParams(rates).amount, 58000);
+});
+
+test('copying a report constructs the current share link without changing the page address', async () => {
+  const { ShareModule, context } = load('?lang=en');
+  let copied;
+  context.navigator.clipboard = { writeText: async value => { copied = value; } };
+  assert.equal(await ShareModule.copyLink({ amount: 9100, fromCurrency: 'USD' }), true);
+  assert.equal(new URL(copied).searchParams.get('amount'), '9100');
+  assert.equal(context.window.location.searchParams.has('amount'), false);
 });
 
 test('clearing an invalidated result removes the salary from its URL', () => {

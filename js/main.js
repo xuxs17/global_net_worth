@@ -1,6 +1,6 @@
 (() => {
   const el = id => document.getElementById(id);
-  const state = { ready: false, loading: true, initialized: false, engaged: false, rates: null, baseline: null, report: null, dataError: false, sharing: false };
+  const state = { ready: false, loading: true, initialized: false, engaged: false, rates: null, baseline: null, report: null, dataError: false, sharing: false, measuredCalculation: false };
   const examples = {
     USD: [2000, 5000, 10000], EUR: [2000, 4000, 6000], GBP: [2000, 3500, 5000],
     CNY: [5000, 10000, 20000], JPY: [200000, 400000, 600000],
@@ -28,9 +28,15 @@
     el('language').value = I18n.getLang();
     document.title = `${I18n.t('title')} | GlobalSalary`;
     document.querySelector('meta[name="description"]').content = I18n.t('subtitle');
+    document.querySelectorAll('[data-language-link]').forEach(link => {
+      const url = new URL(link.href);
+      url.searchParams.set('lang', I18n.getLang());
+      link.href = url.href;
+    });
     el('amount').placeholder = I18n.formatNumber(examples[el('currency').value]?.[0] || 3000);
     if (state.sharing) el('share-text').textContent = I18n.t('capturing');
     updateExamples();
+    AnalyticsModule.updateUI();
   }
 
   function enableControls() {
@@ -43,7 +49,7 @@
     el('result-section').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
   }
 
-  function calculate(scroll = false) {
+  function calculate(scroll = false, source = 'input') {
     if (!state.ready) return;
     state.report = null;
     state.dataError = false;
@@ -59,7 +65,9 @@
       state.report = CalculatorModule.calculate({ amount: raw, fromCurrency: el('currency').value, ...meta() });
       ShareModule.updateURL(state.report.amount, state.report.fromCurrency, I18n.getLang());
       RenderModule.renderReport(state.report, meta());
+      if (!state.measuredCalculation && AnalyticsModule.track('calculate', { source })) state.measuredCalculation = true;
       if (scroll) scrollToResults();
+      return state.report;
     } catch (error) {
       ShareModule.clearURL();
       if (error.code === 'data') {
@@ -104,7 +112,7 @@
         state.initialized = true;
       }
       enableControls();
-      calculate();
+      calculate(false, 'restore');
     } catch (_) {
       state.loading = false;
       state.dataError = true;
@@ -115,7 +123,7 @@
 
   el('salary-form').addEventListener('submit', event => {
     event.preventDefault();
-    calculate(true);
+    calculate(true, 'submit');
   });
   el('amount').addEventListener('input', () => {
     state.engaged = true;
@@ -124,7 +132,7 @@
   el('currency').addEventListener('change', () => {
     state.engaged = true;
     el('amount').placeholder = I18n.formatNumber(examples[el('currency').value]?.[0] || 3000);
-    calculate();
+    calculate(false, 'currency');
   });
   el('quick-fills').addEventListener('click', event => {
     const button = event.target.closest('.quick-fill');
@@ -132,10 +140,11 @@
     state.engaged = true;
     el('amount').value = button.dataset.amount;
     el('currency').value = button.dataset.currency;
-    calculate(true);
+    if (calculate(true, 'preset')) AnalyticsModule.track('preset_used');
   });
   el('language').addEventListener('change', () => {
     I18n.setLang(el('language').value);
+    AnalyticsModule.track('language_changed');
     ShareModule.updateLangParam(I18n.getLang());
     if (!state.engaged) el('currency').value = I18n.getDefaultCurrency(I18n.getLang());
     updateUIText();
@@ -146,13 +155,16 @@
     el(id).addEventListener('click', () => {
       if (!state.report) return;
       el('amount').value = Number((state.report.amount * factor).toPrecision(12));
-      calculate();
+      if (calculate(false, 'scenario')) AnalyticsModule.track('scenario_used', { action: factor === .5 ? 'half' : 'double' });
     });
   });
   el('retry-btn').addEventListener('click', init);
   el('copy-link-btn').addEventListener('click', async () => {
     if (!state.report) return;
-    if (await ShareModule.copyLink()) RenderModule.showToast(I18n.t('copied'));
+    if (await ShareModule.copyLink(state.report)) {
+      AnalyticsModule.track('copy_link');
+      RenderModule.showToast(I18n.t('copied'));
+    }
   });
   el('share-img-btn').addEventListener('click', async () => {
     if (!state.report || state.sharing) return;
@@ -170,7 +182,10 @@
       }
       const saved = await ShareModule.saveImage(image, isCurrent);
       if (!isCurrent() || saved === 'stale') RenderModule.showToast(I18n.t('shareChanged'));
-      else if (saved) RenderModule.showToast(I18n.t('imageReady'));
+      else if (saved) {
+        AnalyticsModule.track('save_image');
+        RenderModule.showToast(I18n.t('imageReady'));
+      }
     } catch (_) {
       RenderModule.showToast(I18n.t('screenshotFailed'));
     } finally {
@@ -179,8 +194,8 @@
       el('share-text').textContent = I18n.t('shareBtn');
     }
   });
-  el('privacy-link').addEventListener('click', () => { el('privacy').open = true; });
   el('currency').value = I18n.getDefaultCurrency(I18n.getLang());
   updateUIText();
+  AnalyticsModule.init();
   init();
 })();
