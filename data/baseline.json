@@ -1,12 +1,15 @@
 {
   "_meta": {
-    "basis": "average_monthly_salary is what the wealth level compares against (see js/main.js buildResults)",
+    "basis": "Compare monthly salary in USD with average_monthly_salary in USD; no wealth, percentile or purchasing-power calculation",
+    "salaryCurrency": "USD",
+    "salaryTaxBasis": "unspecified",
+    "verificationStatus": "legacy_unverified",
     "salarySource": "CEOWORLD 2025 average monthly salary table, hand-transcribed",
     "salaryAsOf": "2025",
     "gniSource": "World Bank / IMF per-capita figures, hand-transcribed",
     "gniAsOf": "2024",
     "unusedFields": ["gdp_per_capita", "ppp_conversion_factor"],
-    "note": "gni_per_capita is only a fallback when average_monthly_salary is missing. Nothing consumes PPP since the PPP column was removed. Refresh is manual — there is no automation for this file."
+    "note": "Legacy hand-transcribed estimates; the original table and gross/net basis have not been independently verified. Missing average salary is unavailable, never replaced with GNI. GNI, GDP and PPP fields are retained as historical data and are not used. Refresh is manual."
   },
   "US": {
     "countryName": "美国",

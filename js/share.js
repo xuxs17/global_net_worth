@@ -1,8 +1,9 @@
 const ShareModule = (() => {
-  function updateURL(amount, fromCurrency) {
+  function updateURL(amount, fromCurrency, lang = I18n.getLang()) {
     const url = new URL(window.location);
-    url.searchParams.set('amount', amount);
+    url.searchParams.set('amount', String(amount));
     url.searchParams.set('from', fromCurrency);
+    url.searchParams.set('lang', lang);
     window.history.replaceState({}, '', url);
   }
 
@@ -12,175 +13,188 @@ const ShareModule = (() => {
     window.history.replaceState({}, '', url);
   }
 
-  function readURLParams() {
+  function clearURL() {
+    const url = new URL(window.location);
+    url.searchParams.delete('amount');
+    url.searchParams.delete('from');
+    window.history.replaceState({}, '', url);
+  }
+
+  function readURLParams(rates) {
     const params = new URLSearchParams(window.location.search);
-    const amount = parseFloat(params.get('amount'));
-    const from = params.get('from');
-    if (amount > 0 && from) {
-      return { amount, fromCurrency: from };
-    }
-    return null;
-  }
-
-  function showToast(icon, msg) {
-    let toast = document.getElementById('share-toast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'share-toast';
-      toast.className = 'share-toast';
-      document.body.appendChild(toast);
-    }
-    toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
-    toast.classList.add('show');
-    clearTimeout(toast._tid);
-    toast._tid = setTimeout(() => toast.classList.remove('show'), 2500);
-  }
-
-  // Fetch and cache the CSS text for injection into cloned document
-  let _cssText = null;
-  async function getCSSText() {
-    if (_cssText) return _cssText;
     try {
-      const resp = await fetch('css/style.css');
-      _cssText = await resp.text();
-      return _cssText;
+      const input = CalculatorModule.readInput({ amount: params.get('amount'), fromCurrency: params.get('from') }, rates);
+      return { amount: input.amount, fromCurrency: input.fromCurrency };
     } catch (_) {
-      return '';
+      return null;
     }
   }
 
-  // Loaded on first click instead of as a blocking <script>: this CDN bundle is
-  // only needed for the share image, and a slow or blocked CDN would otherwise
-  // stall every script after it and leave the whole page inert.
-  const H2C_URL = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-  // Pinned version + hash because the library reads the full DOM; the hash was
-  // taken from two independent mirrors of the 1.4.1 release (jsDelivr, hertzen).
-  const H2C_SRI = 'sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H';
-  let h2cLoading = null;
-
-  function loadHtml2Canvas() {
-    if (window.html2canvas) return Promise.resolve(window.html2canvas);
-    if (!h2cLoading) {
-      h2cLoading = new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        script.src = H2C_URL;
-        script.integrity = H2C_SRI;
-        script.crossOrigin = 'anonymous';
-        script.async = true;
-        script.onload = () => window.html2canvas
-          ? resolve(window.html2canvas)
-          : reject(new Error('html2canvas failed to initialise'));
-        script.onerror = () => {
-          h2cLoading = null;
-          reject(new Error('html2canvas failed to load'));
-        };
-        document.head.appendChild(script);
-      });
-    }
-    return h2cLoading;
-  }
-
-  async function captureImage() {
-    const el = document.getElementById('capture-area');
-    const btn = document.getElementById('share-img-btn');
-    if (!el || !btn) return;
-
-    const originalHTML = btn.innerHTML;
-    btn.innerHTML = '<span class="share-icon">⏳</span> <span id="share-text">' + I18n.t('capturing') + '</span>';
-    btn.disabled = true;
-
+  async function copyLink() {
+    const value = window.location.href;
     try {
-      const render = await loadHtml2Canvas();
-      const cssText = await getCSSText();
-
-      // Flag icons are <img>; html2canvas silently drops them while still decoding
-      await Promise.all([...el.querySelectorAll('img')].map(img =>
-        img.complete ? Promise.resolve() : img.decode().catch(() => {})
-      ));
-
-      const canvas = await render(el, {
-        backgroundColor: '#ffffff',
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        onclone: (clonedDoc) => {
-          // Inject the full CSS so ALL elements keep their styles
-          if (cssText) {
-            const styleEl = clonedDoc.createElement('style');
-            styleEl.textContent = cssText;
-            clonedDoc.head.appendChild(styleEl);
-          }
-
-          // Fix the capture area for clean output
-          const area = clonedDoc.getElementById('capture-area');
-          if (!area) return;
-          area.style.width = '640px';
-          area.style.background = '#ffffff';
-          area.style.border = 'none';
-          area.style.borderRadius = '0';
-          area.style.padding = '24px 24px 20px';
-
-          // Ensure title is visible
-          const title = area.querySelector('.capture-title');
-          if (title) {
-            title.style.display = 'block';
-          }
-
-          // Freeze all animations at their final frame
-          area.querySelectorAll('.result-card').forEach(card => {
-            card.style.animation = 'none';
-          });
-        },
-      });
-
-      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-      let done = false;
-
-      // 1. Clipboard (desktop)
-      if (!done && navigator.clipboard && typeof ClipboardItem !== 'undefined') {
-        try {
-          await navigator.clipboard.write([
-            new ClipboardItem({ 'image/png': blob }),
-          ]);
-          done = true;
-          showToast('✅', I18n.t('copied'));
-        } catch (_) { /* fall through */ }
-      }
-
-      // 2. Web Share (mobile)
-      if (!done && typeof navigator.share === 'function' && typeof navigator.canShare === 'function') {
-        try {
-          const file = new File([blob], 'global-salary-fun.png', { type: 'image/png' });
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file] });
-            done = true;
-          }
-        } catch (_) { /* fall through */ }
-      }
-
-      // 3. Fallback: new tab
-      if (!done) {
-        const url = URL.createObjectURL(blob);
-        const win = window.open(url, '_blank');
-        if (!win) {
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'global-salary-fun.png';
-          a.click();
-        }
-        setTimeout(() => URL.revokeObjectURL(url), 600000);
-        showToast('📥', I18n.t('imageReady'));
-      }
-    } catch (e) {
-      console.error('Screenshot failed:', e);
-      const loadFailed = e instanceof Error && /html2canvas/.test(e.message);
-      showToast(loadFailed ? '⚠️' : '❌',
-        I18n.t(loadFailed ? 'captureUnavailable' : 'screenshotFailed'));
-    } finally {
-      btn.innerHTML = originalHTML;
-      btn.disabled = false;
+      await navigator.clipboard.writeText(value);
+      return true;
+    } catch (_) {
+      return window.prompt(I18n.t('copyPrompt'), value) !== null;
     }
   }
 
-  return { updateURL, updateLangParam, readURLParams, captureImage };
+  function loadFlag(countryCode) {
+    return new Promise(resolve => {
+      const image = new Image();
+      image.referrerPolicy = 'no-referrer';
+      image.onload = () => resolve(image);
+      image.onerror = () => resolve(null);
+      image.src = new URL(RenderModule.flagSrc(countryCode), window.location.href).href;
+    });
+  }
+
+  async function createImage(report, meta) {
+    // Capture translated copy and the report before any asynchronous asset load.
+    const notes = RenderModule.dataNotes(meta);
+    const t = key => I18n.t(key);
+    const labels = {
+      passport: t('passport'), first: t('heroLine1'), second: t('heroLine2'),
+      income: t('monthlyIncome'), count: t('summaryCount'),
+      summary: I18n.t('summarySuffix', { count: report.summary.aboveAverage, total: report.summary.available }),
+    };
+    const seen = new Set();
+    const highlights = [['best', 'bestTitle'], ['closest', 'closestTitle'], ['lowest', 'lowestTitle']]
+      .filter(([key]) => {
+        const code = report.summary[key].countryCode;
+        if (seen.has(code)) return false;
+        seen.add(code);
+        return true;
+      }).map(([key, title]) => {
+        const country = report.summary[key];
+        return {
+          ...country, name: I18n.countryName(country.countryCode), title: t(title),
+          ratioText: `${RenderModule.formatRatio(country.ratio)}×`,
+          average: `${t('localAverage')}: ${RenderModule.formatAmount(country.averageLocal, country.currencyCode)} ${country.currencyCode}`,
+        };
+      });
+    const salary = `${RenderModule.formatAmount(report.amount, report.fromCurrency)} ${report.fromCurrency}`;
+    const missing = report.summary.total - report.summary.available;
+    const warning = [notes.warning, missing ? I18n.t('partialData', { count: missing }) : ''].filter(Boolean).join(' ');
+    const footer = [
+      { text: t('captureBasis'), size: 20, color: '#486253' },
+      { text: `${notes.date} · ${notes.salary}`, size: 18, color: '#486253' },
+      ...(warning ? [{ text: warning, size: 17, color: '#8c5520' }] : []),
+      { text: t('sourceNote'), size: 16, color: '#687160' },
+      { text: t('captureDisclaimer'), size: 16, color: '#687160' },
+    ];
+    const canvas = document.createElement('canvas');
+    canvas.width = 1080;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas unavailable');
+    const family = '"Trebuchet MS", "Microsoft YaHei", sans-serif';
+    const font = (size, weight = 400) => `${weight} ${size}px ${family}`;
+
+    function lines(text, size, width) {
+      ctx.font = font(size);
+      const result = [];
+      let line = '';
+      for (const word of String(text).split(/(\s+)/)) {
+        if (ctx.measureText(line + word).width <= width) { line += word; continue; }
+        if (line.trim()) { result.push(line.trim()); line = ''; }
+        for (const char of word) {
+          if (line && ctx.measureText(line + char).width > width) { result.push(line.trim()); line = ''; }
+          line += char;
+        }
+      }
+      if (line.trim()) result.push(line.trim());
+      return result;
+    }
+    footer.forEach(block => { block.lines = lines(block.text, block.size, 952); });
+    const footerHeight = footer.reduce((height, block) => height + block.lines.length * (block.size + 7) + 8, 0);
+    canvas.height = Math.max(1350, 1010 + footerHeight + 100);
+
+    function fit(text, x, y, maxWidth, size, color, weight = 400, align = 'left') {
+      let actual = size;
+      while (actual > 12 && (ctx.font = font(actual, weight), ctx.measureText(text).width > maxWidth)) actual--;
+      ctx.font = font(actual, weight);
+      ctx.fillStyle = color;
+      ctx.textAlign = align;
+      ctx.fillText(text, x, y);
+      ctx.textAlign = 'left';
+    }
+    function box(x, y, width, height, color, radius = 12) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, radius);
+      ctx.fill();
+    }
+    ctx.fillStyle = '#f7f7ef';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#ccd5bd';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(24, 24, 1032, canvas.height - 48);
+    fit('GlobalSalary.', 64, 92, 380, 36, '#173d32', 700);
+    fit(labels.passport, 1016, 88, 540, 21, '#486253', 400, 'right');
+    fit(labels.first, 64, 205, 952, 80, '#202d25', 700);
+    fit(labels.second, 64, 291, 952, 80, '#173d32', 700);
+    box(64, 337, 952, 77, '#e9efdc');
+    fit(labels.income, 84, 384, 350, 23, '#486253');
+    fit(salary, 996, 387, 530, 36, '#173d32', 700, 'right');
+    ctx.setLineDash([7, 7]);
+    ctx.strokeStyle = '#b8c4a5';
+    ctx.beginPath(); ctx.moveTo(64, 448); ctx.lineTo(1016, 448); ctx.stroke();
+    ctx.setLineDash([]);
+    fit(labels.count, 64, 493, 900, 24, '#486253');
+    fit(`${report.summary.aboveAverage} / ${report.summary.available}`, 64, 591, 420, 100, '#173d32', 700);
+    const summaryLines = lines(labels.summary, 28, 480);
+    summaryLines.forEach((line, index) => fit(line, 530, 541 + index * 37, 480, 28, '#486253'));
+
+    const flags = await Promise.all(highlights.map(country => loadFlag(country.countryCode)));
+    highlights.forEach((country, index) => {
+      const y = 625 + index * 116;
+      box(64, y, 952, 104, index === 0 ? '#e5edcf' : '#fffef9');
+      const image = flags[index];
+      if (image) {
+        ctx.save(); ctx.beginPath(); ctx.arc(104, y + 49, 21, 0, Math.PI * 2); ctx.clip();
+        ctx.drawImage(image, 83, y + 28, 42, 42); ctx.restore();
+      } else fit(country.countryCode, 84, y + 57, 46, 23, '#173d32', 700);
+      fit(country.title, 146, y + 28, 560, 17, '#68765e');
+      fit(country.name, 146, y + 61, 570, 30, '#173d32', 700);
+      fit(country.average, 146, y + 86, 800, 18, '#687160');
+      fit(country.ratioText, 990, y + 61, 280, 49, '#173d32', 700, 'right');
+    });
+    ctx.strokeStyle = '#ccd5bd';
+    ctx.beginPath(); ctx.moveTo(64, 990); ctx.lineTo(1016, 990); ctx.stroke();
+    let footerY = 1020;
+    footer.forEach(block => {
+      block.lines.forEach(line => { fit(line, 64, footerY, 952, block.size, block.color); footerY += block.size + 7; });
+      footerY += 8;
+    });
+    fit('global-salary-fun.netlify.app', 64, canvas.height - 55, 800, 21, '#173d32', 700);
+    fit('GS / 010', 1016, canvas.height - 55, 150, 17, '#687160', 400, 'right');
+    return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('PNG export failed')), 'image/png'));
+  }
+
+  async function saveImage(blob, isCurrent = () => true) {
+    if (!isCurrent()) return 'stale';
+    const file = new File([blob], 'global-salary-passport.png', { type: 'image/png' });
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file] });
+        return true;
+      } catch (error) {
+        if (error.name === 'AbortError') return false;
+      }
+    }
+    // Native sharing can reject much later; validate again before a download.
+    if (!isCurrent()) return 'stale';
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    return true;
+  }
+
+  return { updateURL, updateLangParam, clearURL, readURLParams, copyLink, createImage, saveImage };
 })();

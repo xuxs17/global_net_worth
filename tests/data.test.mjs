@@ -28,7 +28,7 @@ test('every country has a rate the converter can use', () => {
 test('every country has a usable salary baseline', () => {
   for (const code of countries) {
     const country = baseline[code];
-    const monthly = country.average_monthly_salary || country.gni_per_capita / 12;
+    const monthly = country.average_monthly_salary;
     assert.ok(monthly > 0 && Number.isFinite(monthly), `${code} has no positive salary basis`);
   }
 });
@@ -77,16 +77,17 @@ test('every markdown file in the repo is blocked from the public site', () => {
   // each document needs its own rule. This test is what keeps that convention
   // from rotting when someone adds a new doc.
   const toml = fs.readFileSync(path.join(ROOT, 'netlify.toml'), 'utf8');
-  const blocked = new Set(
-    [...toml.matchAll(/from = "([^"]+)"/g)].map(m => decodeURIComponent(m[1]))
-  );
+  const blocked = toml.split('[[redirects]]').slice(1)
+    .filter(rule => /status = 404/.test(rule) && /force = true/.test(rule) && /to = "\/404.html"/.test(rule))
+    .map(rule => decodeURIComponent(rule.match(/from = "([^"]+)"/)?.[1] || ''));
   const docs = [...fs.readdirSync(ROOT, { recursive: true })]
     .map(p => String(p))
     .filter(p => p.endsWith('.md') && !p.startsWith('.git') && !p.startsWith('node_modules'));
 
   assert.ok(docs.length >= 4, `expected the project docs to be found, got ${docs.length}`);
   for (const doc of docs) {
-    assert.ok(blocked.has('/' + doc.split(path.sep).join('/')),
+    const publicPath = '/' + doc.split(path.sep).join('/');
+    assert.ok(blocked.some(rule => rule === publicPath || (rule.endsWith('/*') && publicPath.startsWith(rule.slice(0, -1)))),
       `${doc} would be publicly served - add a [[redirects]] rule with force = true`);
   }
 });
@@ -96,7 +97,7 @@ test('flag assets exist for every country and keep intrinsic size', () => {
     const file = path.join(ROOT, 'assets', 'flags', `${code.toLowerCase()}.svg`);
     assert.ok(fs.existsSync(file), `${code} has no flag asset`);
     const svg = fs.readFileSync(file, 'utf8').split('\n')[0];
-    // html2canvas measures a viewBox-only SVG as 0x0 and silently drops it
+    // Keep flag image dimensions explicit across browser and Canvas consumers.
     assert.match(svg, /width="\d+"\s+height="\d+"/, `${code}.svg lacks width/height`);
   }
 });

@@ -24,6 +24,14 @@ export function makeContext({ search = '', languages = ['en-US'], storage = {} }
     querySelectorAll: () => [],
     addEventListener: () => {},
   };
+  const windowStub = {
+    location: new URL(`https://global-salary-fun.netlify.app/${search}`),
+    history: {
+      replaceState(_state, _title, url) {
+        windowStub.location = new URL(url, windowStub.location);
+      },
+    },
+  };
   return vm.createContext({
     URL,
     URLSearchParams,
@@ -41,7 +49,7 @@ export function makeContext({ search = '', languages = ['en-US'], storage = {} }
       setItem: (key, value) => store.set(key, String(value)),
       removeItem: key => store.delete(key),
     },
-    window: { location: { search } },
+    window: windowStub,
   });
 }
 

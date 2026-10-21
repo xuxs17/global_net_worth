@@ -3,129 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Global Income Comparison — What's Your Income Worth Worldwide?</title>
-  <meta name="description" content="Enter your monthly salary and see how you rank across 10 countries. Compare purchasing power parity (PPP) with fun animated characters.">
-  <meta property="og:title" content="Global Income Comparison">
-  <meta property="og:description" content="See how your salary ranks worldwide">
+  <title>GlobalSalary — Same salary. Different world.</title>
+  <meta name="description" content="Take your salary around the world. Compare your monthly income with average salaries in 10 countries, explore what-if scenarios, and share your salary passport.">
+  <meta property="og:title" content="Same salary. Different world. — GlobalSalary">
+  <meta property="og:description" content="One paycheck. Ten countries. Take your salary on a little world tour.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://global-salary-fun.netlify.app/">
   <meta property="og:image" content="https://global-salary-fun.netlify.app/og-image.png">
-  <meta property="og:image:alt" content="What's your salary worth worldwide? Sample ranking across India, Vietnam and the United States">
+  <meta property="og:image:alt" content="GlobalSalary — Same salary. Different world. Compare monthly income across ten countries.">
   <meta name="twitter:image" content="https://global-salary-fun.netlify.app/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta name="theme-color" content="#1a1a2e">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+  <meta name="theme-color" content="#173d32">
+  <meta name="referrer" content="no-referrer">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23173d32'/%3E%3Ccircle cx='20' cy='20' r='12' fill='none' stroke='%23dbef98' stroke-width='2'/%3E%3Cellipse cx='20' cy='20' rx='5' ry='12' fill='none' stroke='%23dbef98' stroke-width='2'/%3E%3Cpath d='M8 20h24' stroke='%23dbef98' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#salary-form" data-i18n="startJourney">Start exploring</a>
   <div class="page">
     <header class="header">
-      <div class="header-top">
-        <div class="logo">GlobalSalary<span class="logo-dot">.</span></div>
-        <div class="lang-switcher" id="lang-switcher">
-          <button class="lang-toggle" id="lang-toggle" aria-label="Switch language" aria-haspopup="true" aria-expanded="false" aria-controls="lang-dropdown">
-            <span class="lang-icon">🌐</span>
-            <span id="current-lang">EN</span>
-          </button>
-          <div class="lang-dropdown" id="lang-dropdown">
-            <button data-lang="en" class="lang-option active">English</button>
-            <button data-lang="ja" class="lang-option">日本語</button>
-            <button data-lang="ko" class="lang-option">한국어</button>
-            <button data-lang="zh-CN" class="lang-option">中文</button>
-            <button data-lang="vi" class="lang-option">Tiếng Việt</button>
-            <button data-lang="hi" class="lang-option">हिन्दी</button>
-            <button data-lang="pt-BR" class="lang-option">Português (BR)</button>
-          </div>
+      <a class="logo" href="#" aria-label="GlobalSalary home">
+        <svg class="logo-mark" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><circle cx="16" cy="16" r="13" stroke="currentColor" stroke-width="1.8"/><ellipse cx="16" cy="16" rx="5.5" ry="13" stroke="currentColor" stroke-width="1.8"/><path d="M3 16h26M6 8.5h20M6 23.5h20" stroke="currentColor" stroke-width="1.3"/></svg>
+        <span>GlobalSalary<span class="logo-dot">.</span></span>
+      </a>
+      <nav class="header-nav" aria-label="Main navigation">
+        <a class="nav-link" href="#how-it-works" data-i18n="howItWorks">How it works</a>
+        <div class="language-control">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><ellipse cx="12" cy="12" rx="4" ry="9" stroke="currentColor" stroke-width="1.4"/><path d="M3 12h18" stroke="currentColor" stroke-width="1.4"/></svg>
+          <label class="visually-hidden" for="language">Language</label>
+          <select id="language">
+            <option value="en">English</option><option value="zh-CN">中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="vi">Tiếng Việt</option><option value="hi">हिन्दी</option><option value="pt-BR">Português</option>
+          </select>
         </div>
-      </div>
+      </nav>
     </header>
 
     <main>
-      <section class="hero">
-        <h1 class="hero-title" id="hero-title">What's Your Income Worth Worldwide?</h1>
-        <p class="hero-subtitle" id="hero-subtitle">Enter your monthly salary and see how you rank across 10 countries</p>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span><span data-i18n="heroEyebrow">YOUR SALARY, AROUND THE WORLD</span></p>
+          <h1 id="hero-title"><span data-i18n="heroLine1">Same salary.</span><span class="hero-accent" data-i18n="heroLine2">Different world.</span></h1>
+          <p class="hero-subtitle" data-i18n="subtitle">One paycheck. Ten countries. See how your monthly income compares with local averages.</p>
+          <div class="world-route" aria-hidden="true">
+            <div class="route-stop"><img src="assets/flags/in.svg" alt="" width="30" height="30"><span>IN</span></div>
+            <span class="route-line"></span>
+            <div class="route-stop"><img src="assets/flags/jp.svg" alt="" width="30" height="30"><span>JP</span></div>
+            <span class="route-line route-flight"><svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="m20.6 3.4-6.2 2.1-5-2-2 1 3.7 3.1-4.6 3.5-3.1-1.3-1.5 1 3.7 3.1 3.1 3.7 1-1.5-1.3-3.1 3.5-4.6 3.1 3.7 1-2-2-5 2.1-6.2a.6.6 0 0 0-.8-.8Z" transform="translate(0 3)"/></svg></span>
+            <div class="route-stop"><img src="assets/flags/us.svg" alt="" width="30" height="30"><span>US</span></div>
+            <span class="route-more">+7</span>
+          </div>
+          <p class="hero-note" data-i18n="basisShort">Income comparison, not a cost-of-living estimate.</p>
+        </div>
+
+        <div class="ticket-wrap">
+          <div class="ticket">
+            <div class="ticket-top"><span class="ticket-symbol" aria-hidden="true">↗</span><h2 data-i18n="inputTitle">Your ticket to explore</h2><span class="ticket-code" aria-hidden="true">GS / 010</span></div>
+            <form id="salary-form" novalidate>
+              <div class="input-labels"><label for="amount" data-i18n="monthlySalary">Monthly salary</label><label for="currency" data-i18n="currency">Currency</label></div>
+              <div class="input-row">
+                <input type="number" id="amount" name="amount" placeholder="3,000" step="any" min="0.01" inputmode="decimal" aria-describedby="input-error" autocomplete="off" disabled>
+                <select id="currency" name="currency" disabled>
+                  <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="JPY">JPY</option><option value="CNY">CNY</option><option value="INR">INR</option><option value="BRL">BRL</option><option value="VND">VND</option><option value="IDR">IDR</option><option value="RUB">RUB</option>
+                </select>
+              </div>
+              <p class="input-error" id="input-error" aria-live="polite"></p>
+              <button class="calc-btn" id="calc-btn" type="submit" disabled><span data-i18n="calcBtn">Explore my salary</span><span aria-hidden="true">↗</span></button>
+            </form>
+            <div class="ticket-perforation" aria-hidden="true"></div>
+            <div class="quick-area"><p data-i18n="quickAmounts">Or take a quick trip</p><div class="quick-fills" id="quick-fills"><button class="quick-fill" type="button" data-amount="2000" data-currency="USD" disabled>2,000 USD</button><button class="quick-fill" type="button" data-amount="5000" data-currency="USD" disabled>5,000 USD</button><button class="quick-fill" type="button" data-amount="10000" data-currency="USD" disabled>10,000 USD</button></div></div>
+            <div class="ticket-bottom"><span class="barcode" aria-hidden="true"></span><span aria-hidden="true">GS—2026—010</span></div>
+          </div>
+          <p class="privacy-short"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="1.6"/></svg><span data-i18n="privacyShort">Calculated in your browser. No salary is uploaded.</span></p>
+        </div>
       </section>
 
-      <section class="input-section">
-        <div class="input-row">
-          <label class="visually-hidden" for="amount" id="amount-label">Monthly salary</label>
-          <input type="number" id="amount" placeholder="Monthly salary" step="any" min="0.01" inputmode="decimal">
-          <select id="currency" aria-label="Currency">
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-            <option value="JPY">JPY</option>
-            <option value="CNY">CNY</option>
-            <option value="INR">INR</option>
-            <option value="BRL">BRL</option>
-            <option value="VND">VND</option>
-            <option value="IDR">IDR</option>
-            <option value="RUB">RUB</option>
-          </select>
-        </div>
-        <button class="calc-btn" id="calc-btn">Calculate Global Ranking</button>
-        <div class="quick-fills" id="quick-fills">
-          <button class="quick-fill" data-amount="5000" data-currency="CNY">¥5,000 CNY</button>
-          <button class="quick-fill" data-amount="10000" data-currency="CNY">¥10,000 CNY</button>
-          <button class="quick-fill" data-amount="3000" data-currency="USD">$3,000 USD</button>
-          <button class="quick-fill" data-amount="5000" data-currency="USD">$5,000 USD</button>
-          <button class="quick-fill" data-amount="500000" data-currency="JPY">¥500K JPY</button>
-          <button class="quick-fill" data-amount="50000" data-currency="INR">₹50K INR</button>
-        </div>
-      </section>
+      <noscript><p class="notice">Enable JavaScript to compare salaries. Calculations run in your browser.</p></noscript>
+      <section class="empty-state" id="empty-state" aria-live="polite"><span class="empty-globe" aria-hidden="true">↗</span><div><h2 id="empty-title" data-i18n="emptyTitle">Where could your salary take you?</h2><p id="empty-hint" data-i18n="emptyHint">Choose an example or enter a monthly salary to begin.</p></div><button type="button" class="text-button" id="retry-btn" data-i18n="retry" hidden>Try again</button></section>
 
-      <section class="results-section">
+      <section class="results-section" id="result-section" aria-labelledby="results-heading" hidden>
+        <div class="section-heading"><p class="eyebrow" data-i18n="passport">YOUR SALARY PASSPORT</p><span class="ticket-code" aria-hidden="true">GS / 001</span></div>
         <div id="capture-area">
-          <div class="capture-title" id="rank-title">My Global Income Ranking</div>
-          <div class="capture-meta" id="capture-meta"></div>
-          <div id="results-container">
-            <div class="empty-state">
-              <div class="empty-icon">🌍</div>
-              <div class="empty-hint" id="empty-hint">Enter your monthly salary to see your global ranking</div>
-            </div>
+          <div class="passport-summary">
+            <div class="summary-main"><p class="summary-label" data-i18n="summaryCount">Above the average in</p><div class="summary-number"><span id="summary-count">0</span><span class="summary-denominator" id="summary-total">/10</span></div><p class="summary-sentence" id="summary-sentence"></p><div class="salary-pill"><span data-i18n="monthlyIncome">Monthly income</span><strong id="report-amount"></strong></div></div>
+            <div class="summary-highlights" id="summary-highlights"></div>
+            <div class="passport-orbit" aria-hidden="true"><span></span><span></span><span></span></div>
           </div>
-          <p class="visually-hidden" id="results-status" role="status" aria-live="polite"></p>
-          <div class="capture-footer" id="capture-footer">
-            <div class="capture-brand">global-salary-fun.netlify.app</div>
-            <div class="capture-fine" id="capture-fine"></div>
-            <div class="capture-date"><span id="capture-date-label"></span> <span id="capture-date-value">--</span></div>
-          </div>
+          <div class="data-warning" id="data-warning" role="note" hidden></div>
+          <div class="results-toolbar"><div><h2 id="results-heading" data-i18n="resultsTitle">Your salary, country by country</h2><p data-i18n="resultsSubtitle">Same income, converted at market exchange rates.</p></div><span class="average-key"><span aria-hidden="true"></span><span data-i18n="averageMarker">1× = local average</span></span></div>
+          <div class="results-container" id="results-container"></div>
+          <div class="result-metadata"><p id="data-date"></p><p id="salary-year"></p><p id="partial-note" hidden></p></div>
+          <div class="capture-footer"><div class="capture-brand">global-salary-fun.netlify.app</div><p data-i18n="captureDisclaimer">For entertainment only. Not financial advice.</p></div>
         </div>
-        <div class="share-actions" id="share-actions" style="display:none">
-          <button class="share-btn" id="share-img-btn">
-            <span class="share-icon">📸</span>
-            <span id="share-text">Generate Share Image</span>
-          </button>
+        <div class="scenario-bar"><span data-i18n="scenarios">What if…</span><div class="scenario-actions"><button type="button" class="scenario-btn" id="half-btn"><span aria-hidden="true">÷2</span><span data-i18n="halfSalary">Half my salary</span></button><button type="button" class="scenario-btn" id="double-btn"><span aria-hidden="true">×2</span><span data-i18n="doubleSalary">Double my salary</span></button></div></div>
+        <div class="share-panel" id="share-actions"><div class="share-copy"><h2 data-i18n="shareTitle">A little perspective. Worth sharing.</h2><p data-i18n="shareDescription">Save your passport or send a link for someone else to try.</p></div><div class="share-buttons"><button type="button" class="save-btn" id="share-img-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="share-text" data-i18n="shareBtn">Save passport</span></button><button type="button" class="link-btn" id="copy-link-btn"><span aria-hidden="true">↗</span><span data-i18n="copyLink">Copy link</span></button></div><p class="share-privacy" data-i18n="linkPrivacy">The link includes this salary and currency.</p></div>
+      </section>
+      <p class="visually-hidden" id="results-status" role="status" aria-live="polite"></p>
+      <aside class="ad-container" id="ad-container" aria-label="Advertisement" hidden><span data-i18n="advertisement">Advertisement</span><div id="ad-slot"></div></aside>
+
+      <section class="context-section" id="how-it-works" aria-labelledby="context-title">
+        <div class="context-intro"><p class="eyebrow" data-i18n="methodology">Method &amp; sources</p><h2 id="context-title" data-i18n="basisTitle">A comparison,<br>with context.</h2><p data-i18n="caveat">A salary is not wealth. These results do not measure living costs, tax, or your rank among people.</p></div>
+        <div class="context-details">
+          <details open><summary data-i18n="howItWorks">How it works</summary><div class="detail-content"><p data-i18n="basisDescription">We convert your monthly salary to US dollars, then divide it by each country’s average monthly salary. 1× means the same as that average.</p><div class="formula"><span data-i18n="yourSalary">Your salary</span><span aria-hidden="true">÷</span><span data-i18n="localAverage">Local average</span><strong>= ×</strong></div><p class="source-note" data-i18n="sourceNote">Salary estimates: a legacy, hand-transcribed CEOWORLD 2025 reference. Original figures have not been independently verified; gross/net tax basis is unspecified.</p><p class="source-note"><span data-i18n="sourceLink">Exchange-rate sources</span>: <a href="https://www.frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter / ECB</a> · <a href="https://www.exchangerate-api.com/docs/free" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a></p><p class="source-note" data-i18n="freshnessNote">Exchange rates older than 7 calendar days are marked as out of date.</p></div></details>
+          <details><summary data-i18n="whyOrder">Why do countries stay in the same order?</summary><div class="detail-content"><p data-i18n="orderAnswer">All countries compare the same salary against fixed averages, so changing your salary changes the multiples, not their order.</p></div></details>
+          <details id="privacy"><summary data-i18n="privacyTitle">Your salary stays with you</summary><div class="detail-content"><p data-i18n="privacyDescription">Calculations happen on your device. Only your language choice is saved. A shared link contains the salary and currency you choose to share.</p></div></details>
+          <details><summary data-i18n="aboutTitle">About this little experiment</summary><div class="detail-content"><p data-i18n="aboutDescription">GlobalSalary is a playful way to explore income differences across ten countries. It is for curiosity and conversation, not financial advice.</p></div></details>
         </div>
       </section>
-
-      <aside class="ad-container" aria-label="Advertisement">
-        <div class="ad-placeholder">
-          <span class="ad-label">Advertisement</span>
-        </div>
-      </aside>
-
-      <footer class="disclaimer">
-        <p id="disc-1">This tool is for entertainment only. Not financial advice.</p>
-        <p><span id="disc-2">Exchange rate date:</span> <span id="data-date">--</span> · <span id="disc-3">Exchange rates: ECB via Frankfurter, supplemented by open.er-api.com</span></p>
-        <p class="stale-note" id="stale-note"></p>
-        <p id="disc-4">Comparison basis: average monthly salary per country (CEOWORLD 2025)</p>
-        <p class="credit">Flag icons from <a href="https://github.com/twitter/twemoji" rel="license noopener">Twemoji</a> (CC-BY 4.0)</p>
-      </footer>
     </main>
+    <footer class="footer"><div><a class="footer-brand" href="#">GlobalSalary<span>.</span></a><p data-i18n="footerTagline">One salary. A world of perspective.</p></div><div class="footer-right"><a href="#how-it-works" data-i18n="methodology">Method &amp; sources</a><a href="#privacy" id="privacy-link" data-i18n="privacyTitle">Your salary stays with you</a><span>© 2026</span><span class="credit">Flags: <a href="https://github.com/twitter/twemoji" rel="license noopener">Twemoji</a> · CC-BY 4.0</span></div></footer>
   </div>
-
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
   <script src="js/i18n.js"></script>
   <script src="js/exchange.js"></script>
   <script src="js/levels.js"></script>
-  <script src="js/characters.js"></script>
-  <script src="js/share.js"></script>
+  <script src="js/calculator.js"></script>
   <script src="js/render.js"></script>
+  <script src="js/share.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
